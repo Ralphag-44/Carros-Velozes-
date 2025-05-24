@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cópia do Death Rally so que ruim</title>
+</head>
+<body>
+    <canvas id="canva"></canvas>
+    <script src="Entity.js"></script>
+    <script src="Car.js"></script>
+    <script src="Hud.js"></script>
+    <script>
+        let canvas = document.getElementById("canva");
+        canva.width = innerWidth;
+        canva.height = innerHeight;
+        let context = canvas.getContext("2d");
+        let keys = [];
+        let FPS = 30;
+        let timer = setInterval(menu, 1000/FPS);
+
+        //so um array temporario pra pegar a posição dos pontos de colisão da pista
+        // let pontosPista = [];
+
+        function menu()
+        {   
+        }
+        function loop()
+        {   
+        }
+
+        document.addEventListener("keydown", keyD);
+        document.addEventListener("keyup", keyU);
+        function keyD(event)
+        {   keys[event.keyCode] = true;
+        }
+        function keyU(event)
+        {   keys[event.keyCode] = false;
+        }
+        
+        // document.addEventListener("click", putPoint);
+        // function putPoint(event)
+        // {   pontosPista.push(new Point(event.clientX, event.clientY))
+        // }
+    </script>
+</body>
+</html>
+
+<!-- 
+        Telas: 
+
+    Tela Inicial
+
+    Options
+
+    Jogo
+
+        Classes:
+
+    base
+Imagem                                                                      X
+    
+Pontos                                                                      X
+Colisão - Jeffrey Thompson                                                  X
+Draw com rotate
+Draw de debug                                                               
+
+    Hud                                                                     X
+
+    Carro -- Gabriel                                                        X
+
+    Tiros -- Bruno
+--colisão fantasma (ponto central a ponto central na colisão)
+
+    PowerUps
+
+    Particulas                                                              X
+Troca de sprites
+    
+    Cameras                                                                 x
+Slow motion quando morrer / rewind
+
+
+    Sons
+
+        Se der:
+
+    Controlador Universal
+
+        Obstáculos
+
+    Poça
+    Caixote
+    
+
+-->
