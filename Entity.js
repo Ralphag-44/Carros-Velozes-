@@ -21,6 +21,9 @@ class Entity
         this.img = new Image();
         this.img.src = `imgs/${img}.png`;
     }
+    draw()
+    {   context.drawImage(this.img, this.points[0].x, this.points[0].y)
+    }
     collision(entity)
     {   let colidiu = false;
         for(let i = 0; (i < this.points.length) && (!colidiu); i++)
