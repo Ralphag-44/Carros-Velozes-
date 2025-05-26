@@ -6,27 +6,62 @@
     <title>Cópia do Death Rally so que ruim</title>
 </head>
 <body>
+    <style>
+        *{
+            margin: 0;
+        }
+    </style>
     <canvas id="canva"></canvas>
     <script src="Entity.js"></script>
     <script src="Car.js"></script>
+    <script src="Guns.js"></script>
     <script src="Hud.js"></script>
     <script>
         let canvas = document.getElementById("canva");
-        canva.width = innerWidth;
-        canva.height = innerHeight;
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
         let context = canvas.getContext("2d");
+        context.fillStyle = 'gray'
+        context.fillRect(0, 0, canvas.width, canvas.height);
         let keys = [];
         let FPS = 30;
-        let timer = setInterval(menu, 1000/FPS);
-
+        let timer = setInterval(loop, 1000/FPS);
+        let players = [
+            new Car(
+                [
+                    new Point(100, 100),
+                    new Point(200, 100),
+                    new Point(200, 150),
+                    new Point(100, 150),
+                ],
+                "cars/fuscarosa"
+            ),
+            new Car(
+                [
+                    new Point(300, 100),
+                    new Point(400, 100),
+                    new Point(400, 150),
+                    new Point(300, 150),
+                ],
+                "cars/fuscarosa"
+            )
+        ]
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
         // let pontosPista = [];
-
+        const bg = new Image();
+        bg.src = "";
         function menu()
         {   
         }
         function loop()
-        {   
+        {    
+            context.fillStyle = 'gray';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            // context.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < players.length; i++) {
+                players[i].update();
+                players[i].draw();
+            }
         }
 
         document.addEventListener("keydown", keyD);
