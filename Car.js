@@ -1,6 +1,7 @@
 class Car extends Entity
 {   constructor(points, img)
-    {   super(points, img);
+    {   
+        super(points, img);
         this.angle = 0;
     }
     update()
