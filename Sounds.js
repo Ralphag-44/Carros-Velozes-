@@ -1,9 +1,12 @@
 class Sounds {
     constructor() {
-        this.shotgun = new Audio("sounds/shotgun.mp3");
         this.machinegun = new Audio("sounds/machinegun.mp3");
+        this.shotgun = new Audio("sounds/shotgun.mp3");
+        this.missile = new Audio("sounds/missile.mp3");
 
+        this.machinegun.volume = 0.5;
         this.shotgun.volume = 0.25;
+        this.shotgun.volume = 0.5;
     };
 
     cloneAudio(original) {

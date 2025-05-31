@@ -28,14 +28,6 @@ class MachineGunBullet extends Projectile {
     }
 };
 
-class MissileBullet extends Projectile {
-    constructor(origin, angle) {
-        super();
-        this.velocity = 5;
-        this.damage = 99;
-    };
-};
-
 class ShotGunBullet extends Projectile {
     constructor(origin, angle) {
         super([new Point(origin.x + 10 * Math.cos(angle * Math.PI / 180), origin.y + 10 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
@@ -52,3 +44,28 @@ class ShotGunBullet extends Projectile {
         context.stroke();
     }
 };
+
+class MissileBullet extends Projectile {
+    constructor(origin, angle) {
+        super(
+            [
+                new Point(origin[0].x, origin[0].y),
+                new Point(origin[1].x, origin[1].y),
+                new Point(origin[2].x, origin[2].y),
+                new Point(origin[3].x, origin[3].y),
+            ],
+            "guns/missil", angle);
+        this.velocity = 0;
+        this.acceleration = 2
+        this.damage = 99;
+    };
+
+    update() {
+        this.velocity += this.acceleration;
+
+        let dx = Math.cos(this.angle * Math.PI / 180) * this.velocity;
+        let dy = Math.sin(this.angle * Math.PI / 180) * this.velocity;
+        this.translate(dx, dy);
+    };
+};
+
