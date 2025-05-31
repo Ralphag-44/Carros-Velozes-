@@ -14,6 +14,7 @@
     </style>
     <canvas id="canva"></canvas>
     <script src="Entity.js"></script>
+    <script src="Camera.js"></script>
     <script src="Car.js"></script>
     <script src="Hud.js"></script>
     <script>
@@ -32,14 +33,13 @@
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
         //pontosPista.map((v) => "new Point("+v.x+", "+v.y+")").join(",")
         let pontosPista = [];
-
-
+        let cars = [new Car([new Point(50, 50), new Point(150, 50), new Point(150, 100), new Point(50, 100)], "car-pink", 0)];
+        let entities = cars.concat([]);
         function menu()
         {   
         }
         function loop()
-        {   context.drawImage(background, 0,0,canvas.width, canvas.height)
-             context.fillStyle = "red";
+        {   context.fillStyle = "red";
             if(pontosPista.length > 0)
             {   for(let i = 0; (i < pontosPista.length); i++)
                 {  context.beginPath();
@@ -58,6 +58,19 @@
                 context.stroke();
                 context.lineWidth = 1;
             }
+            for(let i = 0; (i < cars.length); i++)
+            {   cars[i].camera.update();
+                for(let i2 = 0; (i2 < entities.length); i2++)
+                {   if(cars[i].camera.show(entities[i2].points))
+                    {   for(let i3 = 0; (i3 < entities[i2].points.length); i3++)
+                        {   entities[i2].points[i3].x *= cars[i].camera.xScale;
+                            entities[i2].points[i3].y *= cars[i].camera.yScale;
+                            entities[i2].draw();
+                        }
+                    }
+                }
+
+            }
         }
 
         document.addEventListener("keydown", keyD);
@@ -67,6 +80,7 @@
         }
         function keyU(event)
         {   keys[event.keyCode] = false;
+            console.log(event.keyCode);
         }
         
         document.addEventListener("click", putPoint);
