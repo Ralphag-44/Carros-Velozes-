@@ -20,8 +20,10 @@ class Entity {
         this.points = points;
         this.img = new Image();
         this.img.src = img ? `imgs/${img}.png` : "";
-        this.width = Math.hypot(this.points[1].x - this.points[0].x, this.points[1].y - this.points[0].y);
-        this.height = Math.hypot(this.points[3].x - this.points[0].x, this.points[3].y - this.points[0].y);
+        if (this.points.length > 3) {
+            this.width = Math.hypot(this.points[1].x - this.points[0].x, this.points[1].y - this.points[0].y);
+            this.height = Math.hypot(this.points[3].x - this.points[0].x, this.points[3].y - this.points[0].y);
+        }
     }
 
     draw() {

@@ -1,5 +1,5 @@
 class Car extends Entity {
-    constructor(points, img) {
+    constructor(points, img, index) {
         super(points, img);
         this.angle = 0;
         this.frontWeapons =
@@ -8,37 +8,55 @@ class Car extends Entity {
                 new ShotGun(this),
                 new MissileLauncher(this),
             ];
+        this.frontWeaponsIndex = 0;
+        this.frontWeaponsCount = 0;
+        this.frontWeaponsDelay = 8 * FPS / 30; //delay ajustavel por causa do numero de updates dependendo do fps
+
+
+        this.index = this.index;
     }
 
     update() {
+        this.changeWeapon();
         this.move();
         for (let i = 0; i < this.frontWeapons.length; i++) {
             this.frontWeapons[i].update();
         }
     }
 
+    changeWeapon() {
+        this.frontWeaponsCount++;
+        if (keys[81] && this.frontWeaponsCount > this.frontWeaponsDelay) {
+            this.frontWeaponsIndex = (this.frontWeaponsIndex + 1) % this.frontWeapons.length;
+            console.log(this.frontWeaponsIndex)
+            this.frontWeaponsCount = 0;
+        }
+        if (keys[69]) {
+            this.frontWeapons[this.frontWeaponsIndex].shootOrigin = {
+                x: (this.frontWeapons[this.frontWeaponsIndex].points[1].x + this.frontWeapons[this.frontWeaponsIndex].points[2].x) / 2,
+                y: (this.frontWeapons[this.frontWeaponsIndex].points[1].y + this.frontWeapons[this.frontWeaponsIndex].points[2].y) / 2
+            };
+            this.frontWeapons[this.frontWeaponsIndex].fire();
+        }
+    }
+
     move() {
         if (keys[87]) {
-            this.translate(10, 10)
+            let dx = Math.cos(this.angle * Math.PI / 180) * 10;
+            let dy = Math.sin(this.angle * Math.PI / 180) * 10;
+            this.translate(dx, dy)
         }
         if (keys[65]) {
-            this.rotate(3);
+            this.rotate(-3);
         }
 
         if (keys[68]) {
-            this.rotate(-3);
+            this.rotate(3);
         }
     }
 
     draw() {
         super.draw();
-        // for (let i = 0; i < this.points.length; i++) {
-        //     context.fillStyle = 'red';
-        //     context.beginPath();
-        //     context.arc(this.points[i].x, this.points[i].y, 4, 0, 2 * Math.PI);
-        //     context.fill();
-        // }
-
         for (let i = 0; i < this.frontWeapons.length; i++) {
             this.frontWeapons[i].draw();
         }
@@ -52,6 +70,7 @@ class Car extends Entity {
             this.frontWeapons[i].rotate(angle);
         };
     }
+
     translate(dx, dy) {
         for (let i = 0; (i < this.points.length); i++) {
             this.points[i].translate(dx, dy);

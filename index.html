@@ -13,9 +13,11 @@
     </style>
     <canvas id="canva"></canvas>
     <script src="Entity.js"></script>
-    <script src="Car.js"></script>
+    <script src="Projectile.js"></script>
     <script src="Guns.js"></script>
+    <script src="Car.js"></script>
     <script src="Hud.js"></script>
+    <script src="Sounds.js"></script>
     <script>
         let canvas = document.getElementById("canva");
         canvas.width = innerWidth;
@@ -34,18 +36,10 @@
                     new Point(200, 150),
                     new Point(100, 150),
                 ],
-                "cars/fuscarosa"
-            ),
-            new Car(
-                [
-                    new Point(300, 100),
-                    new Point(400, 100),
-                    new Point(400, 150),
-                    new Point(300, 150),
-                ],
-                "cars/fuscarosa"
+                "cars/fuscarosa", 0
             )
-        ]
+        ];
+        let sounds = new Sounds();
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
         // let pontosPista = [];
         const bg = new Image();
