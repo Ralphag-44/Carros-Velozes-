@@ -46,6 +46,11 @@ class MachineGun extends Gun {
             new Point(owner.points[0].x, owner.points[0].y),
         ];
         super(points, owner, "guns/machinegun");
+        this.sounds = {
+            fire: function () {
+                new Audio("sounds/machinegun.mp3").play();
+            },
+        };
 
         this.ammo = 400; //400 padrao
         this.baseAmmo = this.ammo;
@@ -59,7 +64,7 @@ class MachineGun extends Gun {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
         };
-        sounds.cloneAudio(sounds.machinegun);
+        this.sounds.fire();
         this.bullets.push(new MachineGunBullet(this.shootOrigin, this.angle));
 
         this.ammo--;
@@ -76,6 +81,11 @@ class ShotGun extends Gun {
             new Point(owner.points[3].x, owner.points[3].y),
         ];
         super(points, owner, "guns/shotgun");
+        this.sounds = {
+            fire: function () {
+                new Audio("sounds/shotgun.mp3").play();
+            },
+        };
 
         this.dispersion = 15; //angulo de dispersao
         this.ammo = 30; // 30 padrao
@@ -90,7 +100,7 @@ class ShotGun extends Gun {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
         };
-        sounds.cloneAudio(sounds.shotgun);
+        this.sounds.fire();
         this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle - this.dispersion));
         this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle));
         this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle + this.dispersion));
@@ -108,6 +118,11 @@ class MissileLauncher extends Gun {
             new Point(owner.points[0].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[0].y),
         ];
         super(points, owner, "guns/missil");
+        this.sounds = {
+            fire: function () {
+                new Audio("sounds/missile.mp3").play();
+            },
+        };
 
         this.ammo = 1; //400 padrao
         this.baseAmmo = this.ammo;
@@ -120,9 +135,12 @@ class MissileLauncher extends Gun {
 
     fire() {
         this.shootOrigin = this.points;
-        sounds.cloneAudio(sounds.missile)
+        this.sounds.fire();
         this.bullets.push(new MissileBullet(this.shootOrigin, this.angle));
         this.ammo--;
+        let dx = -Math.cos(this.angle*Math.PI/180)*20;
+        let dy = -Math.sin(this.angle*Math.PI/180)*20;
+        this.owner.translate(dx,dy);
 
         this.coolDownCount++;
     };

@@ -12,7 +12,6 @@ class Car extends Entity {
         this.frontWeaponsCount = 0;
         this.frontWeaponsDelay = 6 * FPS / 30; //delay ajustavel por causa do numero de updates dependendo do fps
 
-
         this.index = this.index;
     };
 
