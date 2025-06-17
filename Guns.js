@@ -4,8 +4,14 @@ class Gun extends Entity {
         this.bullets = [];
         this.angle = owner.angle;
         this.owner = owner;
+
         this.rechargeCount = 0;
         this.coolDownCount = 0;
+
+        this.isWarm = false;
+        this.maxWarm = 0;
+        this.minWarm = 0;
+        this.warmCount = 0;
     };
 
     update() {
@@ -24,6 +30,9 @@ class Gun extends Entity {
         for (let i = 0; i < this.bullets.length; i++) {
             this.bullets[i].draw();
         };
+
+
+        this.updateWarm();
     };
 
     rotate(angle) {
@@ -34,6 +43,41 @@ class Gun extends Entity {
         };
         this.translate(center.x, center.y);
         this.angle = (this.angle + angle + 360) % 360;
+    };
+
+    canFire() {
+        return (this.ammo > 0 && this.coolDownCount == 0 && !this.isWarm);
+    };
+
+    fireCounters() {
+        this.ammo--;
+        this.coolDownCount++;
+        this.warmCount++;
+    };
+
+    updateWarm() {
+        if (this.warmCount > 0) {
+            this.warmCount--;
+        };
+
+        if (this.warmCount >= this.maxWarm) {
+            this.isWarm = true;
+        };
+
+        if (this.warmCount <= this.minWarm) {
+            this.isWarm = false;
+        };
+
+
+
+        context.beginPath();
+        context.moveTo(this.points[0].x, this.points[0].y);
+        for (let i = 1; i < this.points.length; i++) {
+            context.lineTo(this.points[i].x, this.points[i].y);
+        }
+        context.closePath();
+        context.fillStyle = `rgba(255, 0, 0, ${this.warmCount / this.maxWarm})`;
+        context.fill();
     };
 };
 
@@ -57,9 +101,14 @@ class MachineGun extends Gun {
         this.rechargeTime = 210; //tics
 
         this.coolDownTime = 3; //tics
+
+        this.maxWarm = 100;
+        this.minWarm = 10;
+        this.warmStep = 5;
     };
 
     fire() {
+
         this.shootOrigin = {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
@@ -67,9 +116,15 @@ class MachineGun extends Gun {
         this.sounds.fire();
         this.bullets.push(new MachineGunBullet(this.shootOrigin, this.angle));
 
-        this.ammo--;
-        this.coolDownCount++;
+        this.fireCounters();
+
+        this.warmCount += this.warmStep;
     };
+
+    update() {
+        super.update()
+        console.log(this.isWarm, "count:", this.warmCount)
+    }
 };
 
 class ShotGun extends Gun {
@@ -93,6 +148,11 @@ class ShotGun extends Gun {
         this.rechargeTime = 270; //tics
 
         this.coolDownTime = 35; //tics
+
+        this.maxWarm = 50;
+        this.minWarm = 10;
+        this.warmStep = 50;
+
     };
 
     fire() {
@@ -104,11 +164,12 @@ class ShotGun extends Gun {
         this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle - this.dispersion));
         this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle));
         this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle + this.dispersion));
-        this.ammo--;
 
-        this.coolDownCount++;
+        this.fireCounters();
+        this.warmCount += this.warmStep;
     };
 };
+
 class MissileLauncher extends Gun {
     constructor(owner) {
         let points = [
@@ -128,8 +189,6 @@ class MissileLauncher extends Gun {
         this.baseAmmo = this.ammo;
         this.rechargeTime = 30; //tics
 
-        this.foda = 4
-
         this.coolDownTime = 0; //tics
     };
 
@@ -137,11 +196,8 @@ class MissileLauncher extends Gun {
         this.shootOrigin = this.points;
         this.sounds.fire();
         this.bullets.push(new MissileBullet(this.shootOrigin, this.angle));
-        this.ammo--;
-        let dx = -Math.cos(this.angle*Math.PI/180)*20;
-        let dy = -Math.sin(this.angle*Math.PI/180)*20;
-        this.owner.translate(dx,dy);
 
+        this.ammo--;
         this.coolDownCount++;
     };
 };

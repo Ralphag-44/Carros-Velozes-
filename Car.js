@@ -30,7 +30,7 @@ class Car extends Entity {
             console.log(this.frontWeaponsIndex)
             this.frontWeaponsCount = 0;
         };
-        if (keys[69] && this.frontWeapons[this.frontWeaponsIndex].ammo > 0 && this.frontWeapons[this.frontWeaponsIndex].coolDownCount == 0) {
+        if (keys[69] && this.frontWeapons[this.frontWeaponsIndex].canFire()) {
             this.frontWeapons[this.frontWeaponsIndex].fire();
         };
     };
