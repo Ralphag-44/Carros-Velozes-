@@ -31,7 +31,6 @@ class Gun extends Entity {
             this.bullets[i].draw();
         };
 
-
         this.updateWarm();
     };
 
@@ -67,8 +66,6 @@ class Gun extends Entity {
         if (this.warmCount <= this.minWarm) {
             this.isWarm = false;
         };
-
-
 
         context.beginPath();
         context.moveTo(this.points[0].x, this.points[0].y);
