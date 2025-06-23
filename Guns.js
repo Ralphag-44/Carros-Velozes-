@@ -1,7 +1,7 @@
 class Gun extends Entity {
     constructor(points, owner, img) {
         super(points, img);
-        this.bullets = [];
+        this.bullets = new Projectiles();
         this.angle = owner.angle;
         this.owner = owner;
 
@@ -24,12 +24,8 @@ class Gun extends Entity {
             this.coolDownCount = 0;
         };
 
-        for (let i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].update();
-        };
-        for (let i = 0; i < this.bullets.length; i++) {
-            this.bullets[i].draw();
-        };
+        this.bullets.update()
+        this.bullets.draw();
 
         this.updateWarm();
     };
@@ -110,13 +106,12 @@ class MachineGun extends Gun {
     };
 
     fire() {
-
         this.shootOrigin = {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
         };
         this.sounds.fire();
-        this.bullets.push(new MachineGunBullet(this.shootOrigin, this.angle));
+        this.bullets.list.push(new MachineGunBullet(this.shootOrigin, this.angle));
 
         this.fireCounters();
 
@@ -145,6 +140,7 @@ class ShotGun extends Gun {
         };
 
         this.dispersion = 15; //angulo de dispersao
+        this.bulletsPerShot = 3;
         this.ammo = 30; // 30 padrao
         this.baseAmmo = this.ammo;
         this.rechargeTime = 270; //tics
@@ -162,9 +158,9 @@ class ShotGun extends Gun {
             y: (this.points[1].y + this.points[2].y) / 2
         };
         this.sounds.fire();
-        this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle - this.dispersion));
-        this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle));
-        this.bullets.push(new ShotGunBullet(this.shootOrigin, this.angle + this.dispersion));
+        for (let i = 0; i < this.bulletsPerShot; i++) {
+            this.bullets.list.push(new ShotGunBullet(this.shootOrigin, this.angle - (this.dispersion*(i-((this.bulletsPerShot-1)/2)))/this.bulletsPerShot));
+        }
 
         this.fireCounters();
         this.warmCount += this.warmStep;

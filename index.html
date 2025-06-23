@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cópia do Death Rally so que ruim</title>
 </head>
+
 <body>
     <style>
-        *{
+        * {
             margin: 0;
         }
     </style>
@@ -26,50 +28,38 @@
         context.fillRect(0, 0, canvas.width, canvas.height);
         let keys = [];
         let FPS = 30;
-        let timer = setInterval(loop, 1000/FPS);
-        let players = [
-            new Vanderlei(
-                [
-                    new Point(100, 100),
-                    new Point(200, 100),
-                    new Point(200, 150),
-                    new Point(100, 150),
-                ], 0
-            )
-        ];
+        let timer = setInterval(loop, 1000 / FPS);
+        let players = new Cars();
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
         // let pontosPista = [];
         const bg = new Image();
         bg.src = "";
-        function menu()
-        {   
+        function menu() {
         }
-        function loop()
-        {    
+        function loop() {
             context.fillStyle = 'gray';
             context.fillRect(0, 0, canvas.width, canvas.height);
             // context.drawImage(bg, 0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < players.length; i++) {
-                players[i].update();
-                players[i].draw();
-            }
+            players.update();
+            players.draw();
         }
 
         document.addEventListener("keydown", keyD);
         document.addEventListener("keyup", keyU);
-        function keyD(event)
-        {   keys[event.keyCode] = true;
+        function keyD(event) {
+            keys[event.keyCode] = true;
         }
-        function keyU(event)
-        {   keys[event.keyCode] = false;
+        function keyU(event) {
+            keys[event.keyCode] = false;
         }
-        
+
         // document.addEventListener("click", putPoint);
         // function putPoint(event)
         // {   pontosPista.push(new Point(event.clientX, event.clientY))
         // }
     </script>
 </body>
+
 </html>
 
 <!-- 

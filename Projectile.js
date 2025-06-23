@@ -1,3 +1,30 @@
+class Projectiles {
+    constructor() {
+        this.list = [];
+    }
+
+    update() {
+        for (let i = 0; i < this.list.length; i++) {
+            this.list[i].update();
+
+
+            for (let j = 0; j < players.list.length; j++) {
+                if (this.list[i].collision(players.list[j].points)) {
+                    players.list[j].life -= this.list[i].damage;
+                    this.list.splice(i, 1);
+                    i--
+                }
+            }  
+        }
+    }
+
+    draw() {
+        for (let i = 0; i < this.list.length; i++) {
+            this.list[i].draw();
+        }
+    }
+}
+
 class Projectile extends Entity {
     constructor(points, img, angle) {
         super(points, img);
@@ -9,11 +36,13 @@ class Projectile extends Entity {
         let dy = Math.sin(this.angle * Math.PI / 180) * this.velocity;
         this.translate(dx, dy);
     };
+
+
 };
 
 class MachineGunBullet extends Projectile {
     constructor(origin, angle) {
-        super([new Point(origin.x + 10 * Math.cos(angle * Math.PI / 180), origin.y + 10 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
+        super([new Point(origin.x + 10 * Math.cos(angle * Math.PI / 180), origin.y + 5 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
         this.velocity = 40;
         this.damage = 2;
     };
