@@ -2,12 +2,7 @@ class Car extends Entity {
     constructor(points, img, index) {
         super(points, img);
         this.angle = 0;
-        this.frontWeapons =
-            [
-                new MachineGun(this),
-                new ShotGun(this),
-                new MissileLauncher(this),
-            ];
+
         this.frontWeaponsIndex = 0;
         this.frontWeaponsCount = 0;
         this.frontWeaponsDelay = 6 * FPS / 30; //delay ajustavel por causa do numero de updates dependendo do fps
@@ -16,14 +11,14 @@ class Car extends Entity {
     };
 
     update() {
-        this.changeWeapon();
+        this.updateWeapon();
         this.move();
         for (let i = 0; i < this.frontWeapons.length; i++) {
             this.frontWeapons[i].update();
         };
     };
 
-    changeWeapon() {
+    updateWeapon() {
         this.frontWeaponsCount++;
         if (keys[81] && this.frontWeaponsCount > this.frontWeaponsDelay) {
             this.frontWeaponsIndex = (this.frontWeaponsIndex + 1) % this.frontWeapons.length;
@@ -78,9 +73,54 @@ class Car extends Entity {
 
         // Translata?? as armas junto;
         for (let i = 0; i < this.frontWeapons.length; i++) {
-            for (let j = 0; j < this.frontWeapons[i].points.length; j++) {
-                this.frontWeapons[i].points[j].translate(dx, dy);
-            };
+            this.frontWeapons[i].translate(dx, dy);
         };
     };
 };
+
+
+
+
+
+
+
+class Viper extends Car {
+    constructor(points, index) {
+        super(points, "cars/viper", index);
+        this.life = 100;
+        this.frontWeapons =
+            [
+                new MachineGun(this),
+            ];
+    }
+}
+class Challenger extends Car {
+    constructor(points, index) {
+        super(points, "cars/challenger", index);
+        this.life = 225;
+        this.frontWeapons =
+            [
+                new ShotGun(this),
+            ];
+    }
+}
+class Ranger extends Car {
+    constructor(points, index) {
+        super(points, "cars/ranger", index);
+        this.life = 275;
+        this.frontWeapons =
+            [
+                new MissileLauncher(this),
+            ];
+    }
+}
+class Vanderlei extends Car {
+    constructor(points, index) {
+        super(points, "cars/vanderlei", index);
+        this.life = 375;
+        this.frontWeapons =
+            [
+                new ShotGun(this),
+            ];
+    }
+}

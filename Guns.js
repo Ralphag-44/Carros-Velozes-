@@ -44,6 +44,12 @@ class Gun extends Entity {
         this.angle = (this.angle + angle + 360) % 360;
     };
 
+    translate(dx, dy) {
+        for (let i = 0; i < this.points.length; i++) {
+            this.points[i].translate(dx, dy);
+        };
+    }
+
     canFire() {
         return (this.ammo > 0 && this.coolDownCount == 0 && !this.isWarm);
     };
@@ -96,7 +102,6 @@ class MachineGun extends Gun {
         this.ammo = 400; //400 padrao
         this.baseAmmo = this.ammo;
         this.rechargeTime = 210; //tics
-
         this.coolDownTime = 3; //tics
 
         this.maxWarm = 100;
@@ -149,7 +154,6 @@ class ShotGun extends Gun {
         this.maxWarm = 50;
         this.minWarm = 10;
         this.warmStep = 50;
-
     };
 
     fire() {
@@ -175,7 +179,7 @@ class MissileLauncher extends Gun {
             new Point(owner.points[1].x + 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[1].y),
             new Point(owner.points[0].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[0].y),
         ];
-        super(points, owner, "guns/missil");
+        super(points, owner, "guns/rocket");
         this.sounds = {
             fire: function () {
                 new Audio("sounds/missile.mp3").play();
@@ -184,9 +188,12 @@ class MissileLauncher extends Gun {
 
         this.ammo = 1; //400 padrao
         this.baseAmmo = this.ammo;
-        this.rechargeTime = 30; //tics
-
+        this.rechargeTime = 30 * 4; //tics
         this.coolDownTime = 0; //tics
+
+        this.maxWarm = 50;
+        this.minWarm = 10;
+        this.warmStep = 50;
     };
 
     fire() {
@@ -194,7 +201,7 @@ class MissileLauncher extends Gun {
         this.sounds.fire();
         this.bullets.push(new MissileBullet(this.shootOrigin, this.angle));
 
-        this.ammo--;
-        this.coolDownCount++;
+        this.fireCounters();
+        this.warmCount += this.warmStep;
     };
 };

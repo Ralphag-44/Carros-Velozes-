@@ -28,14 +28,13 @@
         let FPS = 30;
         let timer = setInterval(loop, 1000/FPS);
         let players = [
-            new Car(
+            new Vanderlei(
                 [
                     new Point(100, 100),
                     new Point(200, 100),
                     new Point(200, 150),
                     new Point(100, 150),
-                ],
-                "cars/fuscarosa", 0
+                ], 0
             )
         ];
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
