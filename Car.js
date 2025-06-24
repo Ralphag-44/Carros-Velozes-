@@ -59,32 +59,32 @@ class Car extends Entity {
 
     updateWeapon() {
         this.frontWeaponsCount++;
-        if (keys[81] && this.frontWeaponsCount > this.frontWeaponsDelay && this.index == 0) {
+        if (keys[carsKeys[this.index].frontalShoot] && this.frontWeaponsCount > this.frontWeaponsDelay) {
             this.frontWeaponsIndex = (this.frontWeaponsIndex + 1) % this.frontWeapons.length;
             console.log(this.frontWeaponsIndex)
             this.frontWeaponsCount = 0;
         };
-        if (keys[69] && this.frontWeapons[this.frontWeaponsIndex].canFire() && this.index == 0) {
+        if (keys[carsKeys[this.index].backShoot] && this.frontWeapons[this.frontWeaponsIndex].canFire() && this.index == 0) {
             this.frontWeapons[this.frontWeaponsIndex].fire();
         };
     };
 
     move() {
-        if (keys[87] && this.index == 0) {
+        if (keys[carsKeys[this.index].up]) {
             let dx = Math.cos(this.angle * Math.PI / 180) * 10;
             let dy = Math.sin(this.angle * Math.PI / 180) * 10;
             this.translate(dx, dy)
         };
-        if (keys[83] && this.index == 0) {
+        if (keys[carsKeys[this.index].down]) {
             let dx = -Math.cos(this.angle * Math.PI / 180) * 10;
             let dy = -Math.sin(this.angle * Math.PI / 180) * 10;
             this.translate(dx, dy)
         };
-        if (keys[65] && this.index == 0) {
+        if (keys[carsKeys[this.index].left]) {
             this.rotate(-3);
         };
 
-        if (keys[68] && this.index == 0) {
+        if (keys[carsKeys[this.index].right]) {
             this.rotate(3);
         };
     };

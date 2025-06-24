@@ -93,6 +93,30 @@ class SwitchRoomButton extends Button
 
                 new SwitchRoomButton(canvas.width*.05, canvas.height*.05, "", "","VOLTAR","configurations")
             ];
+            for(let i = 0; (i < buttons.length-1); i++)
+            {   let local = Math.trunc(i/6);
+                switch(i%6)
+                {   case 0:
+                        buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                    break;
+                    case 1:
+                        buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                    break;
+                    case 2:
+                        buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                    break;
+                    case 3:
+                        buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                    break;
+                    case 4:
+                        buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                    break;
+                    case 5:
+                        buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                    break;
+                }
+
+            }
             break;
             case "menu":
                 buttons = [
@@ -163,6 +187,9 @@ class SwitchControlButton extends Button
     {   super(x, y, width, height, text);
         this.height = canvas.height*.1;
         this.width = canvas.width*.1;
+    }
+    clicked()
+    {   switching = true;
     }
 }
 class SetButton extends Button

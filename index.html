@@ -28,6 +28,12 @@
         context.fillStyle = 'gray'
         context.fillRect(0, 0, canvas.width, canvas.height);
         let keys = [];
+        let carsKeys = 
+        [   {left: 65, right: 68, up: 87, down: 83, frontShoot: 81, backShoot: 69}, 
+            {left: 70, right: 72, up: 84, down: 71, frontShoot: 82, backShoot: 89}, 
+            {left: 74, right: 76, up: 73, down: 75, frontShoot: 85, backShoot: 79}, 
+            {left: 199, right: 93, up: 180, down: 126, frontShoot: 80, backShoot: 91}, 
+        ];
         let FPS = 30;
         let timer = setInterval(menu, 1000 / FPS);
         let players = new Cars();
@@ -70,8 +76,54 @@
         let switching = false;
 
         function atualizePosition()
-        {   if(switching)
-            {   
+        {   if(switching && buttonsCanSwitch == buttonsSwitchLimit)
+            {   if(buttons.length >= 24 && keys.includes(true))
+                {   let playerPos = Math.trunc((MenuOptions-1)/6);
+                    switch(MenuOptions%6)
+                    {   case 0: 
+                            carsKeys[playerPos].up = keys.indexOf(true);
+                        break;
+                        case 1: 
+                            carsKeys[playerPos].down = keys.indexOf(true);
+                        break;
+                        case 2: 
+                            carsKeys[playerPos].left = keys.indexOf(true);
+                        break;
+                        case 3: 
+                            carsKeys[playerPos].right = keys.indexOf(true);
+                        break;
+                        case 4: 
+                            carsKeys[playerPos].frontShoot = keys.indexOf(true);
+                        break;
+                        case 5: 
+                            carsKeys[playerPos].backShoot = keys.indexOf(true);
+                        break;
+                    }
+                    for(let i = 0; (i < buttons.length-1); i++)
+                    {   let local = Math.trunc(i/6);
+                        switch(i%6)
+                        {   case 0:
+                                buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                            break;
+                            case 1:
+                                buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                            break;
+                            case 2:
+                                buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                            break;
+                            case 3:
+                                buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                            break;
+                            case 4:
+                                buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                            break;
+                            case 5:
+                                buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                            break;
+                        }
+                    }
+                    buttonsCanSwitch = 0;
+                }
             }
             else
             {   if(buttonsCanSwitch == buttonsSwitchLimit)
@@ -189,6 +241,7 @@
                 {  buttons[i].selected = false; 
                 }
             }
+            
         }
         function loop() {
             context.fillStyle = 'gray';
