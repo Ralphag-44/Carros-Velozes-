@@ -51,7 +51,7 @@ class Car extends Entity {
     };
 
     updateWeapon() {
-        if (keys[69] && this.frontWeapon.canFire() && this.index == 0) {
+        if (keys[carsKeys[this.index].frontWeapon] && this.frontWeapon.canFire()) {
             this.frontWeapon.fire();
         };
     };
