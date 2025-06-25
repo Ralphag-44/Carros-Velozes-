@@ -1,7 +1,7 @@
 class Cars {
     constructor() {
         this.list = [
-            new Challenger(
+            new Viper(
                 [
                     new Point(100, 100),
                     new Point(200, 100),
@@ -41,31 +41,18 @@ class Car extends Entity {
     constructor(points, img, index) {
         super(points, img);
         this.angle = 0;
-
-        this.frontWeaponsIndex = 0;
-        this.frontWeaponsCount = 0;
-        this.frontWeaponsDelay = 6 * FPS / 30; //delay ajustavel por causa do numero de updates dependendo do fps
-
         this.index = index;
     };
 
     update() {
         this.updateWeapon();
         this.move();
-        for (let i = 0; i < this.frontWeapons.length; i++) {
-            this.frontWeapons[i].update();
-        };
+        this.frontWeapon.update();
     };
 
     updateWeapon() {
-        this.frontWeaponsCount++;
-        if (keys[carsKeys[this.index].frontalShoot] && this.frontWeaponsCount > this.frontWeaponsDelay) {
-            this.frontWeaponsIndex = (this.frontWeaponsIndex + 1) % this.frontWeapons.length;
-            console.log(this.frontWeaponsIndex)
-            this.frontWeaponsCount = 0;
-        };
-        if (keys[carsKeys[this.index].backShoot] && this.frontWeapons[this.frontWeaponsIndex].canFire() && this.index == 0) {
-            this.frontWeapons[this.frontWeaponsIndex].fire();
+        if (keys[69] && this.frontWeapon.canFire() && this.index == 0) {
+            this.frontWeapon.fire();
         };
     };
 
@@ -91,18 +78,14 @@ class Car extends Entity {
 
     draw() {
         super.draw();
-        for (let i = 0; i < this.frontWeapons.length; i++) {
-            this.frontWeapons[i].draw();
-        };
+        this.frontWeapon.draw();
     };
 
     rotate(angle) {
         super.rotate(angle);
 
         // Rotaciona as armas junto;
-        for (let i = 0; i < this.frontWeapons.length; i++) {
-            this.frontWeapons[i].rotate(angle);
-        };
+        this.frontWeapon.rotate(angle);
     };
 
     translate(dx, dy) {
@@ -111,9 +94,7 @@ class Car extends Entity {
         };
 
         // Translata?? as armas junto;
-        for (let i = 0; i < this.frontWeapons.length; i++) {
-            this.frontWeapons[i].translate(dx, dy);
-        };
+            this.frontWeapon.translate(dx, dy);
     };
 };
 
@@ -127,40 +108,29 @@ class Viper extends Car {
     constructor(points, index) {
         super(points, "cars/viper", index);
         this.life = 100;
-        this.frontWeapons =
-            [
-                new MachineGun(this),
-            ];
+        this.frontWeapon = new MachineGun(this);
+            
     }
 }
 class Challenger extends Car {
     constructor(points, index) {
         super(points, "cars/challenger", index);
         this.life = 225;
-        this.frontWeapons =
-            [
-                new ShotGun(this),
-            ];
+        this.frontWeapon = new ShotGun(this);
     }
 }
 class Ranger extends Car {
     constructor(points, index) {
         super(points, "cars/ranger", index);
         this.life = 275;
-        this.frontWeapons =
-            [
-                new MissileLauncher(this),
-            ];
+        this.frontWeapon = new MissileLauncher(this);
     }
 }
 class Vanderlei extends Car {
     constructor(points, index) {
         super(points, "cars/vanderlei", index);
         this.life = 375;
-        this.frontWeapons =
-            [
-                new ShotGun(this),
-            ];
+        this.frontWeapon = new ShotGun(this);
     }
 }
 
@@ -168,9 +138,6 @@ class Test extends Car {
     constructor(points, index) {
         super(points, "cars/model-of-a-russian-monitor-novgorod-round-ship-c-1873-in-the-international-maritime-museum-in-hafencity-hamburg-germany-2TC9M4Y", index);
         this.life = 1;
-        this.frontWeapons =
-            [
-                new ShotGun(this),
-            ];
+        this.frontWeapon = new ShotGun(this);
     }
 }

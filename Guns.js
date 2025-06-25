@@ -89,11 +89,6 @@ class MachineGun extends Gun {
             new Point(owner.points[0].x, owner.points[0].y),
         ];
         super(points, owner, "guns/machinegun");
-        this.sounds = {
-            fire: function () {
-                new Audio("sounds/machinegun.mp3").play();
-            },
-        };
 
         this.ammo = 400; //400 padrao
         this.baseAmmo = this.ammo;
@@ -110,18 +105,13 @@ class MachineGun extends Gun {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
         };
-        this.sounds.fire();
+        sounds.guns.machineGun();
         this.bullets.list.push(new MachineGunBullet(this.shootOrigin, this.angle));
 
         this.fireCounters();
 
         this.warmCount += this.warmStep;
     };
-
-    update() {
-        super.update()
-        console.log(this.isWarm, "count:", this.warmCount)
-    }
 };
 
 class ShotGun extends Gun {
@@ -133,11 +123,6 @@ class ShotGun extends Gun {
             new Point(owner.points[3].x, owner.points[3].y),
         ];
         super(points, owner, "guns/shotgun");
-        this.sounds = {
-            fire: function () {
-                new Audio("sounds/shotgun.mp3").play();
-            },
-        };
 
         this.dispersion = 15; //angulo de dispersao
         this.bulletsPerShot = 3;
@@ -157,9 +142,9 @@ class ShotGun extends Gun {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
         };
-        this.sounds.fire();
+        sounds.guns.shotgun();
         for (let i = 0; i < this.bulletsPerShot; i++) {
-            this.bullets.list.push(new ShotGunBullet(this.shootOrigin, this.angle - (this.dispersion*(i-((this.bulletsPerShot-1)/2)))/this.bulletsPerShot));
+            this.bullets.list.push(new ShotGunBullet(this.shootOrigin, this.angle - (this.dispersion * (i - ((this.bulletsPerShot - 1) / 2))) / this.bulletsPerShot));
         }
 
         this.fireCounters();
@@ -176,11 +161,6 @@ class MissileLauncher extends Gun {
             new Point(owner.points[0].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[0].y),
         ];
         super(points, owner, "guns/rocket");
-        this.sounds = {
-            fire: function () {
-                new Audio("sounds/missile.mp3").play();
-            },
-        };
 
         this.ammo = 1; //400 padrao
         this.baseAmmo = this.ammo;
@@ -201,3 +181,43 @@ class MissileLauncher extends Gun {
         this.warmCount += this.warmStep;
     };
 };
+
+class Saw {
+    constructor() {
+
+    }
+
+    update() {
+
+    }
+}
+
+class Flamethrower {
+    constructor() {
+
+    }
+
+    update() {
+
+    }
+}
+
+class PEM {
+    constructor() {
+
+    }
+
+    update() {
+
+    }
+}
+
+class Mine {
+    constructor() {
+
+    }
+
+    update() {
+
+    }
+}

@@ -8,13 +8,14 @@
 </head>
 
 <body>
-    <style>
+    <style id="style">
         * {
             margin: 0;
         }
     </style>
     <canvas id="canvas"></canvas>
     <script src="Entity.js"></script>
+    <script src="Sounds.js"></script>
     <script src="Projectile.js"></script>
     <script src="Guns.js"></script>
     <script src="Car.js"></script>
@@ -34,6 +35,7 @@
             {left: 74, right: 76, up: 73, down: 75, frontShoot: 85, backShoot: 79}, 
             {left: 199, right: 93, up: 180, down: 126, frontShoot: 80, backShoot: 91}, 
         ];
+        let sounds = new Sounds();
         let FPS = 30;
         let timer = setInterval(menu, 1000 / FPS);
         let players = new Cars();

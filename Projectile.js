@@ -42,7 +42,7 @@ class Projectile extends Entity {
 
 class MachineGunBullet extends Projectile {
     constructor(origin, angle) {
-        super([new Point(origin.x + 10 * Math.cos(angle * Math.PI / 180), origin.y + 5 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
+        super([new Point(origin.x + 10 * Math.cos(angle * Math.PI / 180), origin.y + 10 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
         this.velocity = 40;
         this.damage = 2;
     };
