@@ -1,7 +1,7 @@
 class Cars {
     constructor() {
         this.list = [
-            new Viper(
+            new Challenger(
                 [
                     new Point(100, 100),
                     new Point(200, 100),
@@ -47,12 +47,25 @@ class Car extends Entity {
     update() {
         this.updateWeapon();
         this.move();
-        this.frontWeapon.update();
+        for (let i = 0; i < this.weapons.length; i++) {
+            this.weapons[i].update();
+            if (this.index == 1) {
+                console.log(this.weapons[i].life)
+                
+            }
+            if (this.weapons[i].life <= 0) {
+                this.weapons.splice(i, 1)
+                i--;
+            }
+        }
     };
 
     updateWeapon() {
-        if (keys[carsKeys[this.index].frontWeapon] && this.frontWeapon.canFire()) {
-            this.frontWeapon.fire();
+        if (keys[carsKeys[this.index].frontShoot] && this.weapons[0]?.canFire()) {
+            this.weapons[0].fire();
+        };
+        if (keys[carsKeys[this.index].backShoot] && this.weapons[1]?.canActivate()) {
+            this.weapons[1].active = true; // pra pegar no update de cada um separado
         };
     };
 
@@ -78,23 +91,25 @@ class Car extends Entity {
 
     draw() {
         super.draw();
-        this.frontWeapon.draw();
+        for (let i = 0; i < this.weapons.length; i++) {
+            this.weapons[i].draw();
+        }
     };
 
     rotate(angle) {
         super.rotate(angle);
-
-        // Rotaciona as armas junto;
-        this.frontWeapon.rotate(angle);
+        for (let i = 0; i < this.weapons.length; i++) {
+            this.weapons[i].rotate(angle);
+        }
     };
 
     translate(dx, dy) {
         for (let i = 0; (i < this.points.length); i++) {
             this.points[i].translate(dx, dy);
         };
-
-        // Translata?? as armas junto;
-            this.frontWeapon.translate(dx, dy);
+        for (let i = 0; i < this.weapons.length; i++) {
+            this.weapons[i].translate(dx, dy);
+        };
     };
 };
 
@@ -108,36 +123,37 @@ class Viper extends Car {
     constructor(points, index) {
         super(points, "cars/viper", index);
         this.life = 100;
-        this.frontWeapon = new MachineGun(this);
-            
+        this.weapons = [new MachineGun(this), new Flamethrower(this)];
     }
 }
 class Challenger extends Car {
     constructor(points, index) {
         super(points, "cars/challenger", index);
         this.life = 225;
-        this.frontWeapon = new ShotGun(this);
+        this.weapons = [new ShotGun(this), new Saw(this)];
     }
 }
 class Ranger extends Car {
     constructor(points, index) {
         super(points, "cars/ranger", index);
         this.life = 275;
-        this.frontWeapon = new MissileLauncher(this);
+        this.weapons = [new MissileLauncher(this)]
     }
 }
 class Vanderlei extends Car {
     constructor(points, index) {
         super(points, "cars/vanderlei", index);
         this.life = 375;
-        this.frontWeapon = new ShotGun(this);
+        this.weapons = [new ShotGun(this)];
     }
 }
 
 class Test extends Car {
     constructor(points, index) {
         super(points, "cars/model-of-a-russian-monitor-novgorod-round-ship-c-1873-in-the-international-maritime-museum-in-hafencity-hamburg-germany-2TC9M4Y", index);
-        this.life = 1;
-        this.frontWeapon = new ShotGun(this);
+        this.life = 1000;
+        this.weapons = [
+            new ShotGun(this)
+        ];
     }
 }

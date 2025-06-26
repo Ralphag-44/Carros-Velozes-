@@ -49,13 +49,11 @@ class Gun extends Entity {
     canFire() {
         return (this.ammo > 0 && this.coolDownCount == 0 && !this.isWarm);
     };
-
     fireCounters() {
         this.ammo--;
         this.coolDownCount++;
         this.warmCount++;
     };
-
     updateWarm() {
         if (this.warmCount > 0) {
             this.warmCount--;
@@ -98,6 +96,8 @@ class MachineGun extends Gun {
         this.maxWarm = 100;
         this.minWarm = 10;
         this.warmStep = 5;
+
+        this.life = 140;
     };
 
     fire() {
@@ -135,6 +135,8 @@ class ShotGun extends Gun {
         this.maxWarm = 50;
         this.minWarm = 10;
         this.warmStep = 50;
+
+        this.life = 180;
     };
 
     fire() {
@@ -170,6 +172,8 @@ class MissileLauncher extends Gun {
         this.maxWarm = 50;
         this.minWarm = 10;
         this.warmStep = 50;
+
+        this.life = 200;
     };
 
     fire() {
@@ -182,14 +186,77 @@ class MissileLauncher extends Gun {
     };
 };
 
-class Saw {
-    constructor() {
 
+
+
+
+
+
+class SecondGun extends Entity {
+    constructor(points, owner, img) {
+        super(points, img);
+        this.owner = owner;
+        this.angle = owner.angle;
+        this.active = false;
+    }
+
+    canActivate() {
+        return !this.active;
+    }
+
+    rotate(angle) {
+        let center = this.owner.center();
+        this.translate(-center.x, -center.y);
+        for (let i = 0; i < this.points.length; i++) {
+            this.points[i].rotate(angle);
+        };
+        this.translate(center.x, center.y);
+        this.angle = (this.angle + angle + 360) % 360;
+    };
+
+    translate(dx, dy) {
+        for (let i = 0; i < this.points.length; i++) {
+            this.points[i].translate(dx, dy);
+        };
+    }
+}
+
+
+
+class Saw extends SecondGun {
+    constructor(owner) {
+        let points = [
+            new Point(owner.points[0].x + 25, owner.points[0].y - 20),
+            new Point(owner.points[1].x - 25, owner.points[1].y - 20),
+            new Point(owner.points[1].x, owner.points[1].y - 7),
+            new Point(owner.points[0].x, owner.points[0].y - 7),
+        ];
+        super(points, owner, "guns/serraparada");
+        this.damagePerSecond = 20;
+
+        this.life = 120;
     }
 
     update() {
-
+        if (this.active) {
+            this.img.src = "imgs/guns/serramovimento.png";
+            for (let i = 0; i < players.list.length; i++) {
+                if (!(players.list[i].index == this.owner.index)) {
+                    if (this.collision(players.list[i].points)) {
+                        players.list[i].life -= this.damagePerSecond / FPS;
+                    }
+                    for (let j = 0; j < players.list[i].weapons.length; j++) {
+                        if (this.collision(players.list[i].weapons[j].points)) {
+                            players.list[i].weapons[j].life -= this.damagePerSecond / FPS;
+                        }
+                    }
+                }
+            }
+        } else {
+            this.img.src = "imgs/guns/serraparada.png";
+        }
     }
+
 }
 
 class Flamethrower {
@@ -221,3 +288,14 @@ class Mine {
 
     }
 }
+
+
+
+/*
+Viper
+    1*velocidade
+    .25*vida
+    Metralhadora - Arma Primária
+
+Challenger
+*/

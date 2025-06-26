@@ -11,6 +11,7 @@
     <style id="style">
         * {
             margin: 0;
+            overflow: hidden;
         }
     </style>
     <canvas id="canvas"></canvas>
@@ -20,6 +21,7 @@
     <script src="Guns.js"></script>
     <script src="Car.js"></script>
     <script src="Hud.js"></script>
+    <script src="Camera.js"></script>
     <script src="Buttons.js"></script>
     <script>
         let canvas = document.getElementById("canvas");
@@ -37,11 +39,18 @@
         ];
         let sounds = new Sounds();
         let FPS = 30;
-        let timer = setInterval(menu, 1000 / FPS);
-        let players = new Cars();
+        let timer = setInterval(loop, 1000 / FPS);
+        //let players;
+        //let cameras;
         
-        const background = new Image();
-        background.src = "imgs/backgrounds/pista_grande.png";
+        //let cameras = [];
+        let players = new Cars();
+        // for(let i = 0; (i < players.list.length); i++)
+        // {   cameras.push(new Camera(i))
+        // }
+
+        let world = {pista: new Image(), width: 3621, height: 3027}
+        world.pista.src = "imgs/backgrounds/pista_grande.png";
 		const menu_background = new Image();
 		menu_background.src = "imgs/backgrounds/bg.png";
         context.textAlign = "center";
@@ -51,8 +60,7 @@
         //pontosPista.map((v) => "new Point("+v.x+", "+v.y+")").join(",")
         let playersQuantity = 2;
         let pontosPista = [new Point(967, 315),new Point(843, 320),new Point(727, 418),new Point(420, 726),new Point(402, 772),new Point(398, 1306),new Point(383, 1320),new Point(368, 1320),new Point(354, 1306),new Point(354, 266),new Point(995, 266),new Point(1019, 291),new Point(1021, 1387),new Point(1034, 1422),new Point(1059, 1457),new Point(1091, 1488),new Point(1128, 1507),new Point(1203, 1513),new Point(1459, 1513),new Point(1459, 1504),new Point(2510, 1504),new Point(2510, 1591),new Point(2307, 1592),new Point(2265, 1613),new Point(2216, 1663),new Point(2196, 1701),new Point(2190, 1709),new Point(2188, 1724),new Point(2188, 1730),new Point(2188, 2620),new Point(2185, 2637),new Point(2176, 2642),new Point(2155, 2647),new Point(1879, 2647),new Point(1859, 2627),new Point(1876, 2610),new Point(2187, 2610)];
-        let cars = [new Car([new Point(50, 50), new Point(150, 50), new Point(150, 100), new Point(50, 100)], "car-pink", 0)];        
-        buttons = [
+        let buttons = [
             new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2-canvas.height*.3, "", "", "JOGAR", loop), 
             new PlayersButton(innerWidth - innerWidth*.25, innerHeight/2-canvas.height*.12, "", ""), 
             new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.06, "", "", "EQUIPAMENTOS", "equipaments"), 
@@ -78,53 +86,66 @@
         let switching = false;
 
         function atualizePosition()
-        {   if(switching && buttonsCanSwitch == buttonsSwitchLimit)
-            {   if(buttons.length >= 24 && keys.includes(true))
-                {   let playerPos = Math.trunc((MenuOptions-1)/6);
-                    switch(MenuOptions%6)
-                    {   case 0: 
-                            carsKeys[playerPos].up = keys.indexOf(true);
-                        break;
-                        case 1: 
-                            carsKeys[playerPos].down = keys.indexOf(true);
-                        break;
-                        case 2: 
-                            carsKeys[playerPos].left = keys.indexOf(true);
-                        break;
-                        case 3: 
-                            carsKeys[playerPos].right = keys.indexOf(true);
-                        break;
-                        case 4: 
-                            carsKeys[playerPos].frontShoot = keys.indexOf(true);
-                        break;
-                        case 5: 
-                            carsKeys[playerPos].backShoot = keys.indexOf(true);
-                        break;
-                    }
-                    for(let i = 0; (i < buttons.length-1); i++)
-                    {   let local = Math.trunc(i/6);
-                        switch(i%6)
-                        {   case 0:
-                                buttons[i].text = String.fromCharCode(carsKeys[local].up);
+        {   if(switching)
+            {   buttons[MenuOptions].text = "";
+                if(buttonsCanSwitch == buttonsSwitchLimit)
+                {   if(buttons.length >= 24 && keys.includes(true))
+                    {   let playerPos = Math.trunc((MenuOptions)/6);
+                        let newKey = keys.indexOf(true);
+                        let keysT = ["up", "down", "left", "right", "frontShoot", "backShoot"];
+                        for(let i = 0; (i < carsKeys.length); i++)
+                        {   for(let i2 = 0; (i2 < keysT.length); i2++)
+                            {   if(carsKeys[i][keysT[i2]] == newKey)
+                                {   carsKeys[i][keysT[i2]] = "";
+                                }
+                            }
+                        }
+                        switch(MenuOptions%6)
+                        {   case 0: 
+                                carsKeys[playerPos].up = newKey;
                             break;
-                            case 1:
-                                buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                            case 1: 
+                                carsKeys[playerPos].down = newKey;
                             break;
-                            case 2:
-                                buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                            case 2: 
+                                carsKeys[playerPos].left = newKey;
                             break;
-                            case 3:
-                                buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                            case 3: 
+                                carsKeys[playerPos].right = newKey;
                             break;
-                            case 4:
-                                buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                            case 4: 
+                                carsKeys[playerPos].frontShoot = newKey;
                             break;
-                            case 5:
-                                buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                            case 5: 
+                                carsKeys[playerPos].backShoot = newKey;
                             break;
                         }
+                        for(let i = 0; (i < buttons.length-1); i++)
+                        {   let local = Math.trunc(i/6);
+                            switch(i%6)
+                            {   case 0:
+                                    buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                                break;
+                                case 1:
+                                    buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                                break;
+                                case 2:
+                                    buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                                break;
+                                case 3:
+                                    buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                                break;
+                                case 4:
+                                    buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                                break;
+                                case 5:
+                                    buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                                break;
+                            }
+                        }
+                        buttonsCanSwitch = 0;
+                        switching = false;
                     }
-                    buttonsCanSwitch = 0;
                 }
             }
             else
@@ -194,7 +215,7 @@
                         }
                     }
                 }
-                if((keys[32] && buttonsCanSwitch == buttonsSwitchLimit) || (mouse.click && mouse.colliding))
+                if((keys[32] && buttonsCanSwitch == buttonsSwitchLimit) || (mouse.click && mouse.colliding) && !switching)
                 {   let parameter;
                     if(buttons[MenuOptions].text == "SOM")
                     {   parameter = 0;
@@ -212,7 +233,13 @@
         }
         function menu()
         {   context.drawImage(menu_background, 0, 0, canvas.width, canvas.height);
-
+            if(buttons.length < 24 && (buttons[0].text != "PLAYER 1"))
+            {   context.fillStyle = "white";
+                context.font = "100px Times new Roman"
+                context.fillText("DEATH RALLY", 400, 160);
+                context.fillText("(só que ruim)", 400, 260);                
+            }
+            
             atualizeButtons();
             atualizePosition();
             
@@ -246,9 +273,13 @@
             
         }
         function loop() {
-            context.fillStyle = 'gray';
+            context.fillStyle = 'darkgreen';
             context.fillRect(0, 0, canvas.width, canvas.height);
-            // context.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            // context.drawImage(world.pista, 0, 0, world.width, world.height);
+            // for(let i = 0; (i < cameras.length); i++)
+            // {   cameras[i].update();
+            //     cameras[i].draw();
+            // }
             players.update();
             players.draw();
         }
@@ -258,15 +289,15 @@
         document.addEventListener("mousemove", mouseM);
         function keyD(event)
         {   keys[event.keyCode] = true;
+            // console.log(event.keyCode);
         }
         function keyU(event)
         {   keys[event.keyCode] = false;
-            console.log(event.keyCode);
         }
         function mouseM(event)
         {   mouse.x = event.clientX;
             mouse.y = event.clientY;
-            for(let i = 0; (i < buttons.length); i++)
+            for(let i = 0; (i < buttons.length) && (!switching); i++)
             {   if(mouse.collide(buttons[i]))
                 {   MenuOptions = i;
                     mouse.colliding = true;

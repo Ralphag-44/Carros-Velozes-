@@ -1,18 +1,18 @@
 class Sounds {
     constructor() {
         this.guns = {
-            machineGun: function () {
+            machinegun: function () {
                 let audio = new Audio("sounds/machinegun.mp3");
                 audio.volume = 1; //trocar por variavel de volume
                 audio.play();
             },
-            shotGun: function () {
-                let audio = new Audio("sounds/shotgun.mp3").play();
+            shotgun: function () {
+                let audio = new Audio("sounds/shotgun.mp3");
                 audio.volume = 1; //trocar por variavel de volume
                 audio.play();
             },
             missile: function () {
-                let audio = new Audio("sounds/missile.mp3").play();
+                let audio = new Audio("sounds/missile.mp3");
                 audio.volume = 1; //trocar por variavel de volume
                 audio.play();
             },

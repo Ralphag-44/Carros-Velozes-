@@ -42,9 +42,14 @@ class SwitchRoomButton extends Button
         {   case loop:
                 clearInterval(timer);
                 timer = setInterval(this.roomToGo, 1000/FPS);
-                canvas.width = 3621;
-                canvas.height = 3027;
-                document.getElementById("style").textContent = "* { margin: 0px;}"
+                // canvas.width = 3621;
+                // canvas.height = 3027;
+                document.getElementById("style").textContent = "* { margin: 0px; overflow: hidden;}"
+                players = new Cars();
+                cameras = [];
+                for(let i = 0; (i < players.list.length); i++)
+                {   cameras.push(new Camera(i))
+                }
             break;
             case "equipaments":
                 buttons = [
@@ -190,6 +195,7 @@ class SwitchControlButton extends Button
     }
     clicked()
     {   switching = true;
+        console.log("clicou")
     }
 }
 class SetButton extends Button

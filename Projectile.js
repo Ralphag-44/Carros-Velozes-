@@ -13,8 +13,18 @@ class Projectiles {
                     players.list[j].life -= this.list[i].damage;
                     this.list.splice(i, 1);
                     i--
+                } else {
+
+                    for (let k = 0; k < players.list[j].weapons.length; k++) {
+                        if (this.list[i].collision(players.list[j].weapons[k].points)) {
+                            players.list[j].weapons[k].life -= this.list[i].damage;
+                            this.list.splice(i, 1);
+                            i--;
+                        }
+                    }
                 }
-            }  
+
+            }
         }
     }
 

@@ -31,6 +31,7 @@ class Entity {
         context.save();
         context.translate(this.center().x, this.center().y);
         context.rotate((this.angle * Math.PI / 180));
+        //context.drawImage(this.img, -this.width / 2 - cameras[this.index]?.x, -this.height / 2-cameras[this.index]?.y, this.width, this.height);
         context.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
         context.restore();
     };
