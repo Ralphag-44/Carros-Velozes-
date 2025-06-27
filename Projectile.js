@@ -1,6 +1,7 @@
 class Projectiles {
-    constructor() {
+    constructor(owner) {
         this.list = [];
+        this.owner = owner;
     }
 
     update() {
@@ -9,31 +10,29 @@ class Projectiles {
             this.list[i].update();
 
             for (let j = 0; j < players.list.length; j++) {
-                if ((players.list[j].index != this.list[i].own)) {
-                    
-                }
-                console.log(this.list[i])
-                if (this.list[i].collision(players.list[j].points)) {
-                    players.list[j].life -= this.list[i].damage;
-                    hit = true;
-                    break;
-                } else {
-                    
-                    for (let k = 0; k < players.list[j].weapons.length; k++) {
-                        if (this.list[i].collision(players.list[j].weapons[k].points)) {
-                            players.list[j].weapons[k].life -= this.list[i].damage;
-                            hit = true;
-                            break;
+                if (players.list[j] != this.owner) {
+                    if (this.list[i].collision(players.list[j].points)) {
+                        players.list[j].life -= this.list[i].damage;
+                        hit = true;
+                        break;
+                    } else {
+                        for (let k = 0; k < players.list[j].weapons.length; k++) {
+                            if (this.list[i].collision(players.list[j].weapons[k].points)) {
+                                players.list[j].weapons[k].life -= this.list[i].damage;
+                                hit = true;
+                                break;
+                            }
                         }
                     }
+                    if (hit) break;
                 }
-                if (hit) break;
             }
-            
+
             if (hit) {
+                console.log(this.list[i])
                 entities.splice(entities.indexOf(this.list[i]), 1)
                 this.list.splice(i, 1);
-                i--;    
+                i--;
             }
         }
     }
@@ -70,10 +69,10 @@ class MachineGunBullet extends Projectile {
     };
 
     draw(id) {
-        if(cameras[id].collide(this))
-        {   context.beginPath();
-            context.moveTo(this.points[0].x-cameras[id].x, this.points[0].y-cameras[id].y);
-            context.lineTo(this.points[1].x-cameras[id].x, this.points[1].y-cameras[id].y);
+        if (cameras[id].collide(this)) {
+            context.beginPath();
+            context.moveTo(this.points[0].x - cameras[id].x, this.points[0].y - cameras[id].y);
+            context.lineTo(this.points[1].x - cameras[id].x, this.points[1].y - cameras[id].y);
             context.lineWidth = 3;
             context.strokeStyle = "#e6c619";
             context.stroke();
@@ -91,11 +90,11 @@ class ShotGunBullet extends Projectile {
     };
 
     draw(id) {
-        if(cameras[id].collide(this))
-        {   context.beginPath();
-            context.moveTo(this.points[0].x-cameras[id].x, this.points[0].y-cameras[id].y);
-            context.lineTo(this.points[1].x-cameras[id].x, this.points[1].y-cameras[id].y);
-            context.lineWidth = 5;
+        if (cameras[id].collide(this)) {
+            context.beginPath();
+            context.moveTo(this.points[0].x - cameras[id].x, this.points[0].y - cameras[id].y);
+            context.lineTo(this.points[1].x - cameras[id].x, this.points[1].y - cameras[id].y);
+            context.lineWidth = this.width;
             context.strokeStyle = "red";
             context.stroke();
         }
@@ -105,20 +104,22 @@ class ShotGunBullet extends Projectile {
 
 class RifleBullet extends Projectile {
     constructor(origin, angle) {
-        super([new Point(origin.x + 10 * Math.cos(angle * Math.PI / 180), origin.y + 10 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
-        this.velocity = 25;
-        this.damage = 50;
-        this.width = 5;
-        this.height = 10;
+        super([new Point(origin.x + 20 * Math.cos(angle * Math.PI / 180), origin.y + 20 * Math.sin(angle * Math.PI / 180)), new Point(origin.x, origin.y)], "", angle);
+        this.velocity = 40;
+        this.damage = 85;
+        this.width = 4;
+        this.height = 20;
     };
 
     draw(id) {
-        context.beginPath();
-        context.moveTo(this.points[0].x, this.points[0].y);
-        context.lineTo(this.points[1].x, this.points[1].y);
-        context.lineWidth = 5;
-        context.strokeStyle = "red";
-        context.stroke();
+        if (cameras[id].collide(this)) {
+            context.beginPath();
+            context.moveTo(this.points[0].x, this.points[0].y);
+            context.lineTo(this.points[1].x, this.points[1].y);
+            context.lineWidth = this.width;
+            context.strokeStyle = "#bf930d";
+            context.stroke();
+        }
     }
 };
 
@@ -138,6 +139,7 @@ class MissileBullet extends Projectile {
     };
 
     update() {
+        console.log("aaaa")
         this.velocity += this.acceleration;
 
         let dx = Math.cos(this.angle * Math.PI / 180) * this.velocity;

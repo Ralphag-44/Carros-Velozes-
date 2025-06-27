@@ -1,7 +1,7 @@
 class Cars {
     constructor() {
         this.list = [
-            new Viper(
+            new Ranger(
                 [
                     new Point(100, 100),
                     new Point(200, 100),
@@ -37,12 +37,6 @@ class Cars {
             }
         }
     };
-
-    draw() {
-        for (let i = 0; i < this.list.length; i++) {
-            this.list[i].draw();
-        }
-    };
 }
 
 class Car extends Entity {
@@ -57,10 +51,6 @@ class Car extends Entity {
         this.move();
         for (let i = 0; i < this.weapons.length; i++) {
             this.weapons[i].update();
-            if (this.index == 1) {
-                // console.log(this.weapons[i].life)
-                
-            }
             if (this.weapons[i].life <= 0) {
                 this.weapons.splice(i, 1)
                 i--;

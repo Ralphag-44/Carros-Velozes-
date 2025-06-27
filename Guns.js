@@ -1,10 +1,10 @@
 class Gun extends Entity {
     constructor(points, owner, img) {
         super(points, img);
-        this.bullets = new Projectiles();
         this.angle = owner.angle;
         this.owner = owner;
-
+        this.bullets = new Projectiles(this.owner);
+        
         this.rechargeCount = 0;
         this.coolDownCount = 0;
 
@@ -74,11 +74,14 @@ class Gun extends Entity {
         context.fillStyle = `rgba(255, 0, 0, ${this.warmCount / this.maxWarm})`;
         context.fill();
     };
+
     draw(id)
-    {   super.draw(id);
+    {   
         this.bullets.draw(id);
+        super.draw(id);
     }
 };
+
 
 class MachineGun extends Gun {
     constructor(owner) {
@@ -171,7 +174,7 @@ class Rifle extends Gun {
         ];
         super(points, owner, "guns/rifle");
 
-        this.ammo = 30; // 30 padrao
+        this.ammo = 10; // 10 padrao
         this.baseAmmo = this.ammo;
         this.rechargeTime = 9 * FPS; //tics
 
@@ -225,7 +228,6 @@ class MissileLauncher extends Gun {
         let bullet = new MissileBullet(this.shootOrigin, this.angle);
         this.bullets.list.push(bullet);
         entities = entities.concat(bullet);
-
         this.fireCounters();
         this.warmCount += this.warmStep;
     };
@@ -286,7 +288,7 @@ class Saw extends SecondGun {
         if (this.active) {
             this.img.src = "imgs/guns/serramovimento.png";
             for (let i = 0; i < players.list.length; i++) {
-                if (!(players.list[i].index == this.owner.index)) {
+                if (!(players.list[i] == this.owner)) {
                     if (this.collision(players.list[i].points)) {
                         players.list[i].life -= this.damagePerSecond / FPS;
                     }
@@ -357,27 +359,27 @@ class MineLauncher extends SecondGun{
         for (let i = 0; i < this.list.length; i++) {
             let hit = false;
 
-            this.list[i].update();
-
             for (let j = 0; j < players.list.length; j++) {
-                console.log(this.list[i])
-                if (this.list[i].collision(players.list[j].points)) {
-                    players.list[j].life -= this.list[i].damage;
-                    hit = true;
-                    break;
-                } else {
-                    for (let k = 0; k < players.list[j].weapons.length; k++) {
-                        if (this.list[i].collision(players.list[j].weapons[k].points)) {
-                            players.list[j].weapons[k].life -= this.list[i].damage;
-                            hit = true;
-                            break;
+                if (players.list[j] != this.list[i].owner) {
+                    if (this.list[i].collision(players.list[j].points)) {
+                        players.list[j].life -= this.list[i].damage;
+                        hit = true;
+                        break;
+                    } else {
+                        for (let k = 0; k < players.list[j].weapons.length; k++) {
+                            if (this.list[i].collision(players.list[j].weapons[k].points)) {
+                                players.list[j].weapons[k].life -= this.list[i].damage;
+                                hit = true;
+                                break;
+                            }
                         }
                     }
+                    if (hit) break;
                 }
-                if (hit) break;
             }
             
             if (hit) {
+                console.log("kabum")
                 entities.splice(entities.indexOf(this.list[i]), 1)
                 this.list.splice(i, 1);
                 i--;    
@@ -387,21 +389,21 @@ class MineLauncher extends SecondGun{
 
     spawMine() {
         let center = this.center();
-        let mine = new Mine(center.x, center.y, 40, 40);
+        let mine = new Mine(center.x, center.y, 40, 40, this.owner);
         this.list.push(mine);
         entities.push(mine);
     }
 
     draw(id){
-        super.draw(id);
         for (let i = 0; i < this.list.length; i++) {
             this.list[i].draw(id);
         }
+        super.draw(id);
     }
 }
 
 class Mine extends Entity {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, owner) {
         let points = [
             new Point(x-width/2, y-height/2),
             new Point(x+width/2, y-height/2),
@@ -409,12 +411,10 @@ class Mine extends Entity {
             new Point(x-width/2, y+height/2),
         ];
         super(points, "guns/tnt");
+        this.owner = owner;
         
         this.damage = 80;
         this.life = 20;
     }
 
-    explode() {
-
-    }   
 }

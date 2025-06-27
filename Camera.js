@@ -30,7 +30,9 @@ class Camera
     }
     draw()
     {   for(let i = 0; i < entities.length; i++)
-        {   if(this.collide(entities[i]))
+        {   
+            // console.log(i, entities[i])
+            if(this.collide(entities[i]))
             {   entities[i].draw(this.id);
             }
         }
