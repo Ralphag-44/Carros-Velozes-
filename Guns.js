@@ -77,8 +77,8 @@ class Gun extends Entity {
 
     draw(id)
     {   
-        this.bullets.draw(id);
         super.draw(id);
+        //this.bullets.draw(id);
     }
 };
 
@@ -391,13 +391,15 @@ class MineLauncher extends SecondGun{
         let center = this.center();
         let mine = new Mine(center.x, center.y, 40, 40, this.owner);
         this.list.push(mine);
-        entities.push(mine);
+        console.log(entities)
+        entities = entities.concat(mine);
+        console.log(entities)
     }
 
     draw(id){
-        for (let i = 0; i < this.list.length; i++) {
-            this.list[i].draw(id);
-        }
+        // for (let i = 0; i < this.list.length; i++) {
+            //this.list[i].draw(id);
+        // }
         super.draw(id);
     }
 }
@@ -411,6 +413,8 @@ class Mine extends Entity {
             new Point(x-width/2, y+height/2),
         ];
         super(points, "guns/tnt");
+        this.x = x;
+        this.y = y;
         this.owner = owner;
         
         this.damage = 80;

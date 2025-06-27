@@ -34,6 +34,8 @@ class Camera
             // console.log(i, entities[i])
             if(this.collide(entities[i]))
             {   entities[i].draw(this.id);
+                // if(entities[i].img.src.includes("imgs/guns/tnt.png"))
+                    // console.log(entities[i])
             }
         }
         context.strokeStyle = "black";
