@@ -41,13 +41,14 @@
         let FPS = 30;
         let timer = setInterval(loop, 1000 / FPS);
         //let players;
-        //let cameras;
+        // let cameras;
         
-        //let cameras = [];
+        let cameras = [];
         let players = new Cars();
-        // for(let i = 0; (i < players.list.length); i++)
-        // {   cameras.push(new Camera(i))
-        // }
+        let entities = players.list.concat([])
+        for(let i = 0; (i < players.list.length); i++)
+        {   cameras.push(new Camera(i))
+        }
 
         let world = {pista: new Image(), width: 3621, height: 3027}
         world.pista.src = "imgs/backgrounds/pista_grande.png";
@@ -281,7 +282,13 @@
             //     cameras[i].draw();
             // }
             players.update();
-            players.draw();
+            for(let i = 0; (i < cameras.length); i++)
+            {   cameras[i].update();
+                context.save();
+                context.translate(cameras[i].canvasX, cameras[i].canvasY);
+                cameras[i].draw();
+                context.restore();
+            }
         }
 
         document.addEventListener("keydown", keyD);
@@ -289,7 +296,7 @@
         document.addEventListener("mousemove", mouseM);
         function keyD(event)
         {   keys[event.keyCode] = true;
-            // console.log(event.keyCode);
+            console.log(event.keyCode);
         }
         function keyU(event)
         {   keys[event.keyCode] = false;

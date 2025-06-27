@@ -1,28 +1,46 @@
 class Camera
-{   constructor(following)
-    {   this.following = following;
+{   constructor(follow)
+    {   this.follow = players.list[follow];
         if(players.list.length > 3)
         {   this.width = canvas.width/2;
             this.height = canvas.height/2;
-            this.canvasY = Math.trunc(this.height*following/2);
+            this.canvasY = this.height*Math.trunc(follow/2);
+            this.canvasX = this.width*(follow%2);
+            this.shakeIntensityP = 30;
+            this.shakeTime = 0;
+            this.shakeIntensity = 30;
         }
         else
         {   this.width = canvas.width/players.list.length;
             this.height = canvas.height;
             this.canvasY = 0;
+            this.canvasX = this.width*follow;
         }
-        this.x = 0;
-        this.y = 0;
-        this.shakeTime = 0;
-        this.shakeIntensityP = 30;
-        this.shakeIntensity = 30;
-        this.canvasX = this.width*following;
+        this.id = follow;
+    }
+    collide(obj) {
+        let obj_center = obj.center();
+        
+        return !(
+            this.x > obj_center.x +obj.width/2 ||
+            this.x + this.width < obj_center.x - obj.width/2 ||
+            this.y > obj_center.y +obj.height/2 ||
+            this.y + this.height < obj_center.y - obj.height/2
+        );
+    }
+    draw()
+    {   for(let i = 0; i < entities.length; i++)
+        {   if(this.collide(entities[i]))
+            {   entities[i].draw(this.id);
+            }
+        }
+        context.strokeStyle = "black";
+        context.strokeRect(this.canvasX, this.canvasY, this.width, this.height)
     }
     update()
-    {   let player = players.list[this.following];
-        let playerCenter = player.center();
-        this.x = (playerCenter.x + player.width / 2)  - canvas.width / 2;
-        this.y = (playerCenter.y + player.height / 2) - canvas.height / 2;
+    {   let follow_center = this.follow.center();
+        this.x = (follow_center.x + this.follow.width / 2)  - this.width / 2;
+        this.y = (follow_center.y + this.follow.height / 2) - this.height / 2;
         if(this.x < 0)
         {   this.x = 0;
         }
@@ -48,11 +66,5 @@ class Camera
         else
         {   this.shakeIntensity = this.shakeIntensityP;
         }
-    }
-    draw()
-    {   context.drawImage(world.pista, this.x, this.y, this.width, this.height, this.canvasX, this.canvasY, this.width, this.height);
-    }
-    shake()
-    {   this.shakeTime = 20;
     }
 }

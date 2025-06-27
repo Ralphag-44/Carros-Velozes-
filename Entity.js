@@ -27,12 +27,14 @@ class Entity {
         };
     };
 
-    draw() {
+    draw(id) {
         context.save();
-        context.translate(this.center().x, this.center().y);
+        let translate = {x: this.center().x -cameras[id]?.x, y: this.center().y -cameras[id]?.y}
+        context.translate(translate.x, translate.y);
         context.rotate((this.angle * Math.PI / 180));
         //context.drawImage(this.img, -this.width / 2 - cameras[this.index]?.x, -this.height / 2-cameras[this.index]?.y, this.width, this.height);
-        context.drawImage(this.img, -this.width / 2, -this.height / 2, this.width, this.height);
+        context.drawImage(this.img, -this.width / 2 , -this.height / 2, this.width, this.height);
+        //context.drawImage(this.img, this.center().x+this.width/2-cameras[id].x, this.center().y+this.height/2-cameras[id].y, this.x + this.width, this.y + this.height,-this.width / 2 , -this.height / 2, this.width, this.height);
         context.restore();
     };
 

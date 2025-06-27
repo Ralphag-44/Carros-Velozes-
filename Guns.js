@@ -25,8 +25,6 @@ class Gun extends Entity {
         };
 
         this.bullets.update()
-        this.bullets.draw();
-
         this.updateWarm();
     };
 
@@ -76,6 +74,10 @@ class Gun extends Entity {
         context.fillStyle = `rgba(255, 0, 0, ${this.warmCount / this.maxWarm})`;
         context.fill();
     };
+    draw(id)
+    {   super.draw(id);
+        this.bullets.draw(id);
+    }
 };
 
 class MachineGun extends Gun {
@@ -105,9 +107,10 @@ class MachineGun extends Gun {
             x: (this.points[1].x + this.points[2].x) / 2,
             y: (this.points[1].y + this.points[2].y) / 2
         };
-        sounds.guns.machineGun();
-        this.bullets.list.push(new MachineGunBullet(this.shootOrigin, this.angle));
-
+        sounds.guns.machinegun();
+        let bullet = new MachineGunBullet(this.shootOrigin, this.angle);
+        this.bullets.list.push(bullet);
+        entities = entities.concat(bullet);
         this.fireCounters();
 
         this.warmCount += this.warmStep;
@@ -117,10 +120,10 @@ class MachineGun extends Gun {
 class ShotGun extends Gun {
     constructor(owner) {
         let points = [
-            new Point(owner.points[3].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[3].y + 20 * Math.cos(owner.angle * Math.PI / 180)),
-            new Point(owner.points[2].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[2].y + 20 * Math.cos(owner.angle * Math.PI / 180)),
-            new Point(owner.points[2].x, owner.points[2].y),
-            new Point(owner.points[3].x, owner.points[3].y),
+            new Point(owner.points[0].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[0].y + -20 * Math.cos(owner.angle * Math.PI / 180)),
+            new Point(owner.points[1].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[1].y + -20 * Math.cos(owner.angle * Math.PI / 180)),
+            new Point(owner.points[1].x, owner.points[1].y),
+            new Point(owner.points[0].x, owner.points[0].y),
         ];
         super(points, owner, "guns/shotgun");
 
@@ -145,9 +148,49 @@ class ShotGun extends Gun {
             y: (this.points[1].y + this.points[2].y) / 2
         };
         sounds.guns.shotgun();
+        
         for (let i = 0; i < this.bulletsPerShot; i++) {
-            this.bullets.list.push(new ShotGunBullet(this.shootOrigin, this.angle - (this.dispersion * (i - ((this.bulletsPerShot - 1) / 2))) / this.bulletsPerShot));
+            let bullet = new ShotGunBullet(this.shootOrigin, this.angle - (this.dispersion * (i - ((this.bulletsPerShot - 1) / 2))) / this.bulletsPerShot)
+            this.bullets.list.push(bullet);
+            entities = entities.concat(bullet);
         }
+
+        this.fireCounters();
+        this.warmCount += this.warmStep;
+    };
+};
+
+
+class Rifle extends Gun {
+    constructor(owner) {
+        let points = [
+            new Point(owner.points[0].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[0].y + -20 * Math.cos(owner.angle * Math.PI / 180)),
+            new Point(owner.points[1].x - 20 * Math.sin(owner.angle * Math.PI / 180), owner.points[1].y + -20 * Math.cos(owner.angle * Math.PI / 180)),
+            new Point(owner.points[1].x, owner.points[1].y),
+            new Point(owner.points[0].x, owner.points[0].y),
+        ];
+        super(points, owner, "guns/rifle");
+
+        this.ammo = 30; // 30 padrao
+        this.baseAmmo = this.ammo;
+        this.rechargeTime = 9 * FPS; //tics
+
+        this.coolDownTime = 35; //tics
+
+        this.maxWarm = 50;
+        this.minWarm = 10;
+        this.warmStep = 50;
+
+        this.life = 180;
+    };
+
+    fire() {
+        this.shootOrigin = {
+            x: (this.points[1].x + this.points[2].x) / 2,
+            y: (this.points[1].y + this.points[2].y) / 2
+        };
+        sounds.guns.rifle();
+        this.bullets.list.push(new RifleBullet(this.shootOrigin, this.angle));
 
         this.fireCounters();
         this.warmCount += this.warmStep;
@@ -178,8 +221,10 @@ class MissileLauncher extends Gun {
 
     fire() {
         this.shootOrigin = this.points;
-        this.sounds.fire();
-        this.bullets.push(new MissileBullet(this.shootOrigin, this.angle));
+        sounds.guns.missile();
+        let bullet = new MissileBullet(this.shootOrigin, this.angle);
+        this.bullets.list.push(bullet);
+        entities = entities.concat(bullet);
 
         this.fireCounters();
         this.warmCount += this.warmStep;
@@ -226,13 +271,13 @@ class SecondGun extends Entity {
 class Saw extends SecondGun {
     constructor(owner) {
         let points = [
-            new Point(owner.points[0].x + 25, owner.points[0].y - 20),
-            new Point(owner.points[1].x - 25, owner.points[1].y - 20),
-            new Point(owner.points[1].x, owner.points[1].y - 7),
-            new Point(owner.points[0].x, owner.points[0].y - 7),
+            new Point(owner.points[3].x + 25, owner.points[3].y + 20),
+            new Point(owner.points[2].x - 25, owner.points[2].y + 20),
+            new Point(owner.points[2].x, owner.points[2].y + 7),
+            new Point(owner.points[3].x, owner.points[3].y + 7),
         ];
         super(points, owner, "guns/serraparada");
-        this.damagePerSecond = 20;
+        this.damagePerSecond = 30;
 
         this.life = 120;
     }
@@ -259,13 +304,24 @@ class Saw extends SecondGun {
 
 }
 
-class Flamethrower {
-    constructor() {
+class Flamethrower extends SecondGun {
+    constructor(owner) {
+        let points = [
+            new Point(owner.points[3].x + 5, owner.points[3].y + 20),
+            new Point(owner.points[2].x - 5, owner.points[2].y + 20),
+            new Point(owner.points[2].x, owner.points[2].y),
+            new Point(owner.points[3].x, owner.points[3].y),
+        ];
+        super(points, owner, "guns/flamethrower");
+        this.damagePerSecond = 30;
 
+        this.life = 100;
     }
 
     update() {
-
+        if (this.active) {
+            
+        }
     }
 }
 
@@ -279,23 +335,86 @@ class PEM {
     }
 }
 
-class Mine {
-    constructor() {
-
+class MineLauncher extends SecondGun{
+    constructor(owner){
+        let points = [
+            new Point(owner.points[3].x + 5, owner.points[3].y + 20),
+            new Point(owner.points[2].x - 5, owner.points[2].y + 20),
+            new Point(owner.points[2].x, owner.points[2].y),
+            new Point(owner.points[3].x, owner.points[3].y),
+        ];
+        super(points, owner, "guns/minelauncher");
+        this.list = [];
     }
 
-    update() {
+    update(){
+        if (this.active) {
+            this.spawMine();
+            this.active = false;
+        }
 
+
+        for (let i = 0; i < this.list.length; i++) {
+            let hit = false;
+
+            this.list[i].update();
+
+            for (let j = 0; j < players.list.length; j++) {
+                console.log(this.list[i])
+                if (this.list[i].collision(players.list[j].points)) {
+                    players.list[j].life -= this.list[i].damage;
+                    hit = true;
+                    break;
+                } else {
+                    for (let k = 0; k < players.list[j].weapons.length; k++) {
+                        if (this.list[i].collision(players.list[j].weapons[k].points)) {
+                            players.list[j].weapons[k].life -= this.list[i].damage;
+                            hit = true;
+                            break;
+                        }
+                    }
+                }
+                if (hit) break;
+            }
+            
+            if (hit) {
+                entities.splice(entities.indexOf(this.list[i]), 1)
+                this.list.splice(i, 1);
+                i--;    
+            }
+        }
+    }
+
+    spawMine() {
+        let center = this.center();
+        let mine = new Mine(center.x, center.y, 40, 40);
+        this.list.push(mine);
+        entities.push(mine);
+    }
+
+    draw(id){
+        super.draw(id);
+        for (let i = 0; i < this.list.length; i++) {
+            this.list[i].draw(id);
+        }
     }
 }
 
+class Mine extends Entity {
+    constructor(x, y, width, height) {
+        let points = [
+            new Point(x-width/2, y-height/2),
+            new Point(x+width/2, y-height/2),
+            new Point(x+width/2, y+height/2),
+            new Point(x-width/2, y+height/2),
+        ];
+        super(points, "guns/tnt");
+        
+        this.damage = 80;
+        this.life = 20;
+    }
 
+    explode() {
 
-/*
-Viper
-    1*velocidade
-    .25*vida
-    Metralhadora - Arma Primária
-
-Challenger
-*/
+    }   
+}
