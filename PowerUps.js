@@ -1,6 +1,5 @@
-class PowerUp extends Entity
+class PowerUp
 {   constructor()
     {   
-    super()
     }
 }
