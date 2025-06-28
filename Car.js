@@ -225,7 +225,7 @@ class Car extends Entity {
 
 	this.mark.lines = this.mark.lines.slice(0, length - 1).concat([this.mark.lines[this.mark.lines.length - 1].concat([JSON.parse(JSON.stringify(this.points))])]);
 	this.mark.lines.push([JSON.parse(JSON.stringify(this.points))]);
-   	this.mark.intens.push((Math.abs(this.direcao_alvo - this.direcao)));
+   	this.mark.intens.push(Math.min(1,(Math.abs(this.direcao_alvo - this.direcao))));
 
 
    	for(let i = 0; i < this.mark.intens.length; i++) {
@@ -382,17 +382,17 @@ class Car extends Entity {
 
 		// Drift e reflexão inline
 		let ang_1 = this.ang_vet(data[1], this.points[4], {
-			x: (this.points[1].x + this.points[2].x) / 2,
-			y: (this.points[2].y + this.points[2].y) / 2,
+			x: (this.points[0].x + this.points[1].x) / 2,
+			y: (this.points[0].y + this.points[1].y) / 2,
 		});
 		let ang_2 = 180 - ang_1;
-		let ponto_medio_1 = {
-			x: (this.points[0].x + this.points[1].x + this.points[4].x) / 3,
-			y: (this.points[0].y + this.points[1].y + this.points[4].y) / 3,
-		};
 		let ponto_medio_2 = {
-			x: (this.points[2].x + this.points[3].x + this.points[4].x) / 3,
-			y: (this.points[2].y + this.points[3].y + this.points[4].y) / 3,
+			x: (this.points[2].x + this.points[1].x + this.points[4].x) / 3,
+			y: (this.points[2].y + this.points[1].y + this.points[4].y) / 3,
+		};
+		let ponto_medio_1 = {
+			x: (this.points[0].x + this.points[3].x + this.points[4].x) / 3,
+			y: (this.points[0].y + this.points[3].y + this.points[4].y) / 3,
 		};
 		let dist_1 = Math.hypot(
 			ponto_medio_1.x - data[1].x,
@@ -488,6 +488,7 @@ class Car extends Entity {
 
 
 	super.draw(id);
+    if(debug){super.draw_debug(id);}
 	        for (let i = 0; i < this.weapons.length; i++) {
             this.weapons[i].draw(id);
         }

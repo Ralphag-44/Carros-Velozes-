@@ -49,6 +49,87 @@ class Entity {
         context.restore();
     };
 
+        draw_debug(id) {
+        const cam = cameras[id];
+
+        // Hitbox vermelha
+        context.lineWidth = 2;
+        context.strokeStyle = "red";
+        context.beginPath();
+        context.moveTo(this.points[0].x - cam.x, this.points[0].y - cam.y);
+        for (let i = 1; i < this.points.length-1; i++) {
+            context.lineTo(
+            this.points[i].x - cam.x,
+            this.points[i].y - cam.y
+            );
+        }
+        context.closePath();
+        context.stroke();
+
+
+        // Direção atual (preto) e alvo (amarelo)
+        const cx = this.points[4].x - cam.x;
+        const cy = this.points[4].y - cam.y;
+
+        context.lineWidth = 3;
+
+        // velocidade
+        context.strokeStyle = "black";
+        context.beginPath();
+        context.moveTo(cx, cy);
+        context.lineTo(
+            cx + Math.cos(this.direcao) * 6 * this.velocidade,
+            cy + Math.sin(this.direcao) * 6 * this.velocidade
+        );
+        context.stroke();
+
+        // direção alvo
+        context.strokeStyle = "yellow";
+        context.beginPath();
+        context.moveTo(cx, cy);
+        context.lineTo(
+            cx + Math.cos(this.direcao_alvo) * 50,
+            cy + Math.sin(this.direcao_alvo) * 50
+        );
+        context.stroke();
+
+
+        // Pontos médios das arestas
+        context.fillStyle = "black";
+        let mid01x = ((this.points[1].x + this.points[0].x) / 2) - cam.x;
+        let mid01y = ((this.points[1].y + this.points[0].y) / 2) - cam.y;
+        context.beginPath();
+        context.arc(mid01x, mid01y, 5, 0, 2 * Math.PI);
+        context.fill();
+
+        let mid23x = ((this.points[2].x + this.points[3].x) / 2) - cam.x;
+        let mid23y = ((this.points[2].y + this.points[3].y) / 2) - cam.y;
+        context.beginPath();
+        context.arc(mid23x, mid23y, 5, 0, 2 * Math.PI);
+        context.fill();
+
+
+        // Linha 1 (azul)
+        context.strokeStyle = "blue";
+        context.beginPath();
+        context.moveTo(mid01x, mid01y);
+        context.lineTo(
+            this.points[this.points.length - 1].x - cam.x,
+            this.points[this.points.length - 1].y - cam.y
+        );
+        context.stroke();
+
+        // Linha 2 (laranja)
+        context.strokeStyle = "orange";
+        context.beginPath();
+        context.moveTo(mid23x, mid23y);
+        context.lineTo(
+            this.points[this.points.length - 1].x - cam.x,
+            this.points[this.points.length - 1].y - cam.y
+        );
+        context.stroke();
+        }
+
     translate(dx, dy) {
         for (let i = 0; i < this.points.length; i++) {
             this.points[i].translate(dx, dy)
