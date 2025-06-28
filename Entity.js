@@ -188,7 +188,14 @@ class Entity {
     {   let colidiu = false;
 
         let fig_a = this.hitbox.slice(0, this.hitbox.length-1);
-        let fig_b = entity.hitbox.slice(0, entity.hitbox.length-1);
+        let fig_b; 
+        if(!(fig_b instanceof Car))
+        {
+             fig_b = entity.hitbox.slice(0, entity.hitbox.length-1);
+        }
+        else{
+            fig_b = entity.points.slice(0, entity.points.length);
+        }
 
         for(let i = 0; (i < fig_a.length) && (!colidiu); i++)
         {   let x1 = fig_a[i].x;
