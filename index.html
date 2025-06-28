@@ -8,7 +8,191 @@
 <body>
     <canvas id="canvas"></canvas>
     <script>
+        let canvas = document.getElementById("canvas");
+        canvas.width = 7242/2;
+        canvas.height = 6054/2;
+        let context = canvas.getContext("2d");
+        let pista = new Image();
+        //pista.src = "pista_grande.png";
+        pista.src = "pista_normal.png";
+        class Point
+        {   constructor(x, y)
+            {   this.x = x;
+                this.y = y;
+            }
+        }
+        // let PontosPista = [
+            
+        // ]
+
+
+
+        // let PontosPista = [
+        //     [   new Point(3718, 3614),new Point(3740, 3664),new Point(3794, 3662),new Point(3796, 3600),new Point(3756, 3588),new Point(3720, 3614)
+        //     ],
+        //     [   new Point(1934, 630), new Point(1686, 640), new Point(1454, 836), new Point(840, 1452), new Point(804, 1544), new Point(796, 2612), new Point(766, 2640), new Point(736, 2640), new Point(708, 2612), new Point(708, 532), new Point(1990, 532), new Point(2038, 582), new Point(2042, 2774), new Point(2068, 2844), new Point(2118, 2914), new Point(2182, 2976), new Point(2256, 3014), new Point(2406, 3026), new Point(2918, 3026), new Point(2918, 3008), new Point(5020, 3008), new Point(5020, 3182), new Point(4614, 3184), new Point(4530, 3226), new Point(4432, 3326), new Point(4392, 3402), new Point(4380, 3418), new Point(4376, 3448), new Point(4376, 3460), new Point(4376, 5240), new Point(4370, 5274), new Point(4352, 5284), new Point(4310, 5294), new Point(3758, 5294), new Point(3718, 5254), new Point(3752, 5220), new Point(4374, 5220), new Point(4955, 5228), new Point(4957, 5423), new Point(4972, 5508), new Point(5028, 5590), new Point(5093, 5653), new Point(5165, 5692), new Point(5258, 5697), new Point(5337, 5698), new Point(6323, 5700), new Point(6424, 5670), new Point(6508, 5597), new Point(6571, 5503), new Point(6608, 5412), new Point(6604, 5347), new Point(6611, 5283), new Point(6606, 5213), new Point(6598, 5135), new Point(6586, 5047), new Point(6559, 4963), new Point(6524, 4923), new Point(6406, 4832), new Point(6334, 4816), new Point(6268, 4810), new Point(6199, 4811), new Point(5358, 4809), new Point(5351, 4558), new Point(5316, 4385), new Point(5235, 4312), new Point(5138, 4258), new Point(5033, 4238), new Point(4951, 4238), new Point(4284, 4237), new Point(4222, 4212), new Point(4204, 4140), new Point(4204, 4063), new Point(5079, 4065), new Point(5179, 4092), new Point(5716, 4622), new Point(5827, 4642), new Point(6327, 4643), new Point(6430, 4613), new Point(6515, 4537), new Point(6587, 4450), new Point(6605, 4347), new Point(6605, 3803), new Point(6587, 3712), new Point(6557, 3625), new Point(6150, 3223), new Point(6088, 3197), new Point(5857, 3183), new Point(5858, 3012), new Point(6308, 3007), new Point(6457, 2937), new Point(6525, 2857), new Point(6558, 2763), new Point(6562, 1052), new Point(6510, 952), new Point(6430, 857), new Point(6345, 817), new Point(6298, 795), new Point(5815, 810), new Point(5715, 880), new Point(5219, 1372), new Point(5213, 1372), new Point(4693, 853), new Point(4635, 822), new Point(4569, 805), new Point(4121, 798), new Point(4021, 853), new Point(3946, 915), new Point(3896, 990), new Point(3869, 1085), new Point(3869, 1168), new Point(3869, 2245), new Point(3931, 2392), new Point(3992, 2462), new Point(4058, 2504), new Point(4124, 2525), new Point(4216, 2529), new Point(4606, 2531), new Point(4664, 2500), new Point(4755, 2430), new Point(5213, 1957), new Point(5227, 1960), new Point(5646, 2378), new Point(5758, 2493), new Point(5870, 2527), new Point(6803, 2527), new Point(6935, 2443), new Point(7010, 2366), new Point(7038, 2273), new Point(7045, 2234), new Point(7045, 1726), new Point(7018, 1649), new Point(6941, 1558), new Point(6878, 1505), new Point(6802, 1474), new Point(6745, 1465), new Point(3719, 1465), new Point(3624, 1474), new Point(3545, 1511), new Point(3479, 1569), new Point(3441, 1602), new Point(3403, 1670), new Point(3390, 1721), new Point(3387, 1763), new Point(3392, 2221), new Point(2425, 2221), new Point(2426, 2162), new Point(1948, 2166), new Point(1901, 2154), new Point(1867, 2119), new Point(1858, 2086), new Point(1851, 2079), new Point(1851, 1816), new Point(1881, 1791), new Point(1919, 1779), new Point(2453, 1781), new Point(2710, 1764), new Point(2841, 1663), new Point(2966, 1530), new Point(3135, 1369), new Point(3192, 1278), new Point(3193, 870), new Point(3187, 830), new Point(3171, 801), new Point(3065, 675), new Point(3007, 635), new Point(1934, 630)
+        //     ],
+        //     [   new Point(1934, 1010), new Point(1850, 1028), new Point(1822, 1044), new Point(1222, 1640), new Point(1184, 1726), new Point(1180, 2782), new Point(1174, 2820), new Point(1146, 2864), new Point(1022, 2990), new Point(936, 3018), new Point(882, 3026), new Point(562, 3028), new Point(482, 2996), new Point(432, 2950), new Point(348, 2850), new Point(322, 2814), new Point(318, 506), new Point(422, 382), new Point(536, 272), new Point(698, 174), new Point(782, 152), new Point(2168, 150), new Point(2240, 158), new Point(2400, 308), new Point(2424, 376), new Point(2434, 412), new Point(2434, 2580), new Point(2492, 2644), new Point(6132, 2612), new Point(6172, 2576), new Point(6172, 1234), new Point(6118, 1186), new Point(6052, 1186), new Point(5962, 1212), new Point(5918, 1242), new Point(5858, 1304), new Point(5828, 1334), new Point(5694, 1462), new Point(5706, 1860), new Point(5962, 2114), new Point(6071, 2141), new Point(6588, 2144), new Point(6643, 2096), new Point(6650, 1917), new Point(6613, 1874), new Point(6575, 1857), new Point(6343, 1855), new Point(5716, 1857), new Point(4712, 1860), new Point(3827, 1857), new Point(3803, 1880), new Point(3780, 1904), new Point(3778, 1970), new Point(3779, 2540), new Point(3768, 2552), new Point(1732, 2550), new Point(1658, 2530), new Point(1585, 2472), new Point(1504, 2390), new Point(1482, 2330), new Point(1472, 2285), new Point(1470, 1766), new Point(1476, 1606), new Point(1507, 1556), new Point(1554, 1502), new Point(1612, 1447), new Point(1647, 1423), new Point(1692, 1396), new Point(1765, 1390), new Point(1858, 1389), new Point(2017, 1390), new Point(2484, 1389), new Point(2587, 1343), new Point(2814, 1111), new Point(2806, 1051), new Point(2776, 1027), new Point(2735, 1011), new Point(1934, 1010)
+        //     ],
+        //     [   new Point(1714, 626), new Point(2950, 626), new Point(3078, 698), new Point(3170, 804), new Point(3192, 902), new Point(3192, 1246), new Point(3178, 1298), new Point(3088, 1394), new Point(2944, 1540), new Point(2788, 1706), new Point(2740, 1746), new Point(2680, 1766), new Point(2640, 1772), new Point(1896, 1778), new Point(1862, 1820), new Point(1846, 1912), new Point(1852, 2080), new Point(1868, 2124), new Point(1890, 2144), new Point(1940, 2162), new Point(2004, 2166), new Point(2016, 2158), new Point(2422, 2160), new Point(2422, 2220), new Point(3386, 2226), new Point(3386, 1732), new Point(3416, 1642), new Point(3466, 1580), new Point(3558, 1500), new Point(3650, 1466), new Point(6784, 1466), new Point(6846, 1484), new Point(6964, 1576), new Point(7030, 1676), new Point(7040, 1720), new Point(7042, 2266), new Point(7024, 2314), new Point(7012, 2350), new Point(6988, 2390), new Point(6932, 2442), new Point(6896, 2480), new Point(6814, 2516), new Point(6794, 2528), new Point(5868, 2530), new Point(5808, 2510), new Point(5760, 2492), new Point(5744, 2480), new Point(5220, 1952), new Point(5208, 1952), new Point(5002, 2164), new Point(4980, 2182), new Point(4946, 2210), new Point(4922, 2248), new Point(4858, 2312), new Point(4768, 2404), new Point(4676, 2488), new Point(4644, 2510), new Point(4594, 2522), new Point(4188, 2530), new Point(4044, 2498), new Point(3960, 2442), new Point(3900, 2364), new Point(3872, 2282), new Point(3864, 2244), new Point(3868, 1080), new Point(3912, 956), new Point(3978, 882), new Point(4064, 816), new Point(4116, 798), new Point(4576, 798), new Point(4668, 832), new Point(4688, 848), new Point(5210, 1372), new Point(5802, 804), new Point(6298, 804), new Point(6372, 826), new Point(6468, 896), new Point(6526, 970), new Point(6554, 1036), new Point(6560, 1048), new Point(6558, 2756), new Point(6530, 2836), new Point(6502, 2886), new Point(6442, 2932), new Point(6400, 2974), new Point(6346, 2992), new Point(6306, 3008), new Point(5860, 3010), new Point(5860, 3192), new Point(6060, 3196), new Point(6140, 3232), new Point(6194, 3270), new Point(6272, 3344), new Point(6564, 3636), new Point(6584, 3720), new Point(6598, 3850), new Point(6600, 3886), new Point(6598, 4386), new Point(6564, 4464), new Point(6508, 4534), new Point(6422, 4612), new Point(6320, 4636), new Point(5802, 4634), new Point(5742, 4624), new Point(5672, 4580), new Point(5180, 4084), new Point(5082, 4058), new Point(4196, 4060), new Point(4196, 4176), new Point(4218, 4214), new Point(4264, 4238), new Point(5064, 4242), new Point(5142, 4264), new Point(5228, 4316), new Point(5310, 4390), new Point(5336, 4476), new Point(5350, 4644), new Point(5350, 4820), new Point(6344, 4822), new Point(6414, 4840), new Point(6468, 4880), new Point(6556, 4974), new Point(6584, 5056), new Point(6598, 5186), new Point(6598, 5434), new Point(6568, 5512), new Point(6502, 5594), new Point(6440, 5652), new Point(6390, 5678), new Point(6312, 5692), new Point(5240, 5692), new Point(5158, 5676), new Point(5094, 5638), new Point(5032, 5576), new Point(4972, 5498), new Point(4952, 5442), new Point(4960, 5212), new Point(3746, 5212), new Point(3716, 5248), new Point(3718, 5274), new Point(3746, 5300), new Point(4322, 5300), new Point(4368, 5272), new Point(4382, 5232), new Point(4384, 5212), new Point(4384, 3413), new Point(4423, 3342), new Point(4488, 3280), new Point(4548, 3213), new Point(4633, 3180), new Point(5024, 3183), new Point(5028, 3005), new Point(2927, 3018), new Point(2914, 3033), new Point(2316, 3027), new Point(2261, 3013), new Point(2189, 2980), new Point(2129, 2913), new Point(2072, 2838), new Point(2050, 2777), new Point(2041, 2753), new Point(2041, 593), new Point(1986, 536), new Point(1919, 531), new Point(1016, 531), new Point(711, 531), new Point(711, 2612), new Point(735, 2642), new Point(773, 2646), new Point(789, 2619), new Point(799, 2567), new Point(800, 1548), new Point(835, 1457), new Point(908, 1387), new Point(1099, 1193), new Point(1405, 889), new Point(1568, 713), new Point(1654, 652), new Point(1714, 626)
+        //     ],
+        //     [   new Point(4772, 3585), new Point(4772, 5444), new Point(4749, 5512), new Point(4689, 5598), new Point(4602, 5675), new Point(4496, 5702), new Point(3612, 5698), new Point(3520, 5687), new Point(3450, 5647), new Point(3390, 5585), new Point(3338, 5505), new Point(3317, 5418), new Point(3315, 5333), new Point(3318, 5232), new Point(3310, 5138), new Point(3313, 5047), new Point(3365, 4945), new Point(3435, 4880), new Point(3517, 4828), new Point(3622, 4810), new Point(3705, 4812), new Point(4958, 4812), new Point(4965, 4732), new Point(4930, 4665), new Point(4845, 4645), new Point(4095, 4643), new Point(4003, 4632), new Point(3933, 4595), new Point(3873, 4525), new Point(3818, 4447), new Point(3800, 4350), new Point(3795, 4262), new Point(3798, 4065), new Point(3612, 4068), new Point(3515, 4055), new Point(3448, 4003), new Point(3367, 3920), new Point(3327, 3858), new Point(3318, 3770), new Point(3320, 3410), new Point(3363, 3313), new Point(3433, 3247), new Point(3508, 3195), new Point(3623, 3177), new Point(3882, 3180), new Point(3983, 3205), new Point(4087, 3258), new Point(4160, 3332), new Point(4187, 3415), new Point(4203, 3503), new Point(4212, 3592), new Point(4213, 3662), new Point(5220, 3663), new Point(5327, 3683), new Point(5430, 3742), new Point(5869, 4183), new Point(5962, 4235), new Point(6147, 4237), new Point(6185, 4213), new Point(6207, 4142), new Point(6199, 4052), new Point(6195, 3950), new Point(6179, 3860), new Point(6135, 3788), new Point(6022, 3683), new Point(5964, 3623), new Point(5872, 3595), new Point(5767, 3583), new Point(4772, 3587) 
+        //     ],
+        //     [   new Point(5364, 3188), new Point(5468, 3188), new Point(5468, 3005), new Point(5364, 3005), new Point(5364, 3188)
+        //     ],
+        //     [   new Point(5354, 5218), new Point(6184, 5222), new Point(6201, 5269), new Point(6184, 5292), new Point(5406, 5293), new Point(5370, 5259), new Point(5354, 5218)
+        //     ]
+        // ];
         
+//         function dividePoints(pointsArrays) {
+        //   return pointsArrays.map(arr => arr.map(p => new Point(p.x / 2, p.y / 2)));
+        // }
+        // function gerarTextoFormatado(pontos) {
+        //     return `let PontosPista = [\n` +
+        //         pontos.map(camadas =>
+        //             `    [   ${camadas.map(p => `new Point(${p.x}, ${p.y})`).join(',')} ]`
+        //         ).join(',\n') +
+        //         `\n];`;
+        // }
+        let PontosPista = [
+            [   new Point(1859, 1807),new Point(1870, 1832),new Point(1897, 1831),new Point(1898, 1800),new Point(1878, 1794),new Point(1860, 1807) ],
+            [   new Point(967, 315),new Point(843, 320),new Point(727, 418),new Point(420, 726),new Point(402, 772),new Point(398, 1306),new Point(383, 1320),new Point(368, 1320),new Point(354, 1306),new Point(354, 266),new Point(995, 266),new Point(1019, 291),new Point(1021, 1387),new Point(1034, 1422),new Point(1059, 1457),new Point(1091, 1488),new Point(1128, 1507),new Point(1203, 1513),new Point(1459, 1513),new Point(1459, 1504),new Point(2510, 1504),new Point(2510, 1591),new Point(2307, 1592),new Point(2265, 1613),new Point(2216, 1663),new Point(2196, 1701),new Point(2190, 1709),new Point(2188, 1724),new Point(2188, 1730),new Point(2188, 2620),new Point(2185, 2637),new Point(2176, 2642),new Point(2155, 2647),new Point(1879, 2647),new Point(1859, 2627),new Point(1876, 2610),new Point(2187, 2610),new Point(2477.5, 2614),new Point(2478.5, 2711.5),new Point(2486, 2754),new Point(2514, 2795),new Point(2546.5, 2826.5),new Point(2582.5, 2846),new Point(2629, 2848.5),new Point(2668.5, 2849),new Point(3161.5, 2850),new Point(3212, 2835),new Point(3254, 2798.5),new Point(3285.5, 2751.5),new Point(3304, 2706),new Point(3302, 2673.5),new Point(3305.5, 2641.5),new Point(3303, 2606.5),new Point(3299, 2567.5),new Point(3293, 2523.5),new Point(3279.5, 2481.5),new Point(3262, 2461.5),new Point(3203, 2416),new Point(3167, 2408),new Point(3134, 2405),new Point(3099.5, 2405.5),new Point(2679, 2404.5),new Point(2675.5, 2279),new Point(2658, 2192.5),new Point(2617.5, 2156),new Point(2569, 2129),new Point(2516.5, 2119),new Point(2475.5, 2119),new Point(2142, 2118.5),new Point(2111, 2106),new Point(2102, 2070),new Point(2102, 2031.5),new Point(2539.5, 2032.5),new Point(2589.5, 2046),new Point(2858, 2311),new Point(2913.5, 2321),new Point(3163.5, 2321.5),new Point(3215, 2306.5),new Point(3257.5, 2268.5),new Point(3293.5, 2225),new Point(3302.5, 2173.5),new Point(3302.5, 1901.5),new Point(3293.5, 1856),new Point(3278.5, 1812.5),new Point(3075, 1611.5),new Point(3044, 1598.5),new Point(2928.5, 1591.5),new Point(2929, 1506),new Point(3154, 1503.5),new Point(3228.5, 1468.5),new Point(3262.5, 1428.5),new Point(3279, 1381.5),new Point(3281, 526),new Point(3255, 476),new Point(3215, 428.5),new Point(3172.5, 408.5),new Point(3149, 397.5),new Point(2907.5, 405),new Point(2857.5, 440),new Point(2609.5, 686),new Point(2606.5, 686),new Point(2346.5, 426.5),new Point(2317.5, 411),new Point(2284.5, 402.5),new Point(2060.5, 399),new Point(2010.5, 426.5),new Point(1973, 457.5),new Point(1948, 495),new Point(1934.5, 542.5),new Point(1934.5, 584),new Point(1934.5, 1122.5),new Point(1965.5, 1196),new Point(1996, 1231),new Point(2029, 1252),new Point(2062, 1262.5),new Point(2108, 1264.5),new Point(2303, 1265.5),new Point(2332, 1250),new Point(2377.5, 1215),new Point(2606.5, 978.5),new Point(2613.5, 980),new Point(2823, 1189),new Point(2879, 1246.5),new Point(2935, 1263.5),new Point(3401.5, 1263.5),new Point(3467.5, 1221.5),new Point(3505, 1183),new Point(3519, 1136.5),new Point(3522.5, 1117),new Point(3522.5, 863),new Point(3509, 824.5),new Point(3470.5, 779),new Point(3439, 752.5),new Point(3401, 737),new Point(3372.5, 732.5),new Point(1859.5, 732.5),new Point(1812, 737),new Point(1772.5, 755.5),new Point(1739.5, 784.5),new Point(1720.5, 801),new Point(1701.5, 835),new Point(1695, 860.5),new Point(1693.5, 881.5),new Point(1696, 1110.5),new Point(1212.5, 1110.5),new Point(1213, 1081),new Point(974, 1083),new Point(950.5, 1077),new Point(933.5, 1059.5),new Point(929, 1043),new Point(925.5, 1039.5),new Point(925.5, 908),new Point(940.5, 895.5),new Point(959.5, 889.5),new Point(1226.5, 890.5),new Point(1355, 882),new Point(1420.5, 831.5),new Point(1483, 765),new Point(1567.5, 684.5),new Point(1596, 639),new Point(1596.5, 435),new Point(1593.5, 415),new Point(1585.5, 400.5),new Point(1532.5, 337.5),new Point(1503.5, 317.5),new Point(967, 315) ],
+            [   new Point(967, 505),new Point(925, 514),new Point(911, 522),new Point(611, 820),new Point(592, 863),new Point(590, 1391),new Point(587, 1410),new Point(573, 1432),new Point(511, 1495),new Point(468, 1509),new Point(441, 1513),new Point(281, 1514),new Point(241, 1498),new Point(216, 1475),new Point(174, 1425),new Point(161, 1407),new Point(159, 253),new Point(211, 191),new Point(268, 136),new Point(349, 87),new Point(391, 76),new Point(1084, 75),new Point(1120, 79),new Point(1200, 154),new Point(1212, 188),new Point(1217, 206),new Point(1217, 1290),new Point(1246, 1322),new Point(3066, 1306),new Point(3086, 1288),new Point(3086, 617),new Point(3059, 593),new Point(3026, 593),new Point(2981, 606),new Point(2959, 621),new Point(2929, 652),new Point(2914, 667),new Point(2847, 731),new Point(2853, 930),new Point(2981, 1057),new Point(3035.5, 1070.5),new Point(3294, 1072),new Point(3321.5, 1048),new Point(3325, 958.5),new Point(3306.5, 937),new Point(3287.5, 928.5),new Point(3171.5, 927.5),new Point(2858, 928.5),new Point(2356, 930),new Point(1913.5, 928.5),new Point(1901.5, 940),new Point(1890, 952),new Point(1889, 985),new Point(1889.5, 1270),new Point(1884, 1276),new Point(866, 1275),new Point(829, 1265),new Point(792.5, 1236),new Point(752, 1195),new Point(741, 1165),new Point(736, 1142.5),new Point(735, 883),new Point(738, 803),new Point(753.5, 778),new Point(777, 751),new Point(806, 723.5),new Point(823.5, 711.5),new Point(846, 698),new Point(882.5, 695),new Point(929, 694.5),new Point(1008.5, 695),new Point(1242, 694.5),new Point(1293.5, 671.5),new Point(1407, 555.5),new Point(1403, 525.5),new Point(1388, 513.5),new Point(1367.5, 505.5),new Point(967, 505) ],
+            [   new Point(857, 313),new Point(1475, 313),new Point(1539, 349),new Point(1585, 402),new Point(1596, 451),new Point(1596, 623),new Point(1589, 649),new Point(1544, 697),new Point(1472, 770),new Point(1394, 853),new Point(1370, 873),new Point(1340, 883),new Point(1320, 886),new Point(948, 889),new Point(931, 910),new Point(923, 956),new Point(926, 1040),new Point(934, 1062),new Point(945, 1072),new Point(970, 1081),new Point(1002, 1083),new Point(1008, 1079),new Point(1211, 1080),new Point(1211, 1110),new Point(1693, 1113),new Point(1693, 866),new Point(1708, 821),new Point(1733, 790),new Point(1779, 750),new Point(1825, 733),new Point(3392, 733),new Point(3423, 742),new Point(3482, 788),new Point(3515, 838),new Point(3520, 860),new Point(3521, 1133),new Point(3512, 1157),new Point(3506, 1175),new Point(3494, 1195),new Point(3466, 1221),new Point(3448, 1240),new Point(3407, 1258),new Point(3397, 1264),new Point(2934, 1265),new Point(2904, 1255),new Point(2880, 1246),new Point(2872, 1240),new Point(2610, 976),new Point(2604, 976),new Point(2501, 1082),new Point(2490, 1091),new Point(2473, 1105),new Point(2461, 1124),new Point(2429, 1156),new Point(2384, 1202),new Point(2338, 1244),new Point(2322, 1255),new Point(2297, 1261),new Point(2094, 1265),new Point(2022, 1249),new Point(1980, 1221),new Point(1950, 1182),new Point(1936, 1141),new Point(1932, 1122),new Point(1934, 540),new Point(1956, 478),new Point(1989, 441),new Point(2032, 408),new Point(2058, 399),new Point(2288, 399),new Point(2334, 416),new Point(2344, 424),new Point(2605, 686),new Point(2901, 402),new Point(3149, 402),new Point(3186, 413),new Point(3234, 448),new Point(3263, 485),new Point(3277, 518),new Point(3280, 524),new Point(3279, 1378),new Point(3265, 1418),new Point(3251, 1443),new Point(3221, 1466),new Point(3200, 1487),new Point(3173, 1496),new Point(3153, 1504),new Point(2930, 1505),new Point(2930, 1596),new Point(3030, 1598),new Point(3070, 1616),new Point(3097, 1635),new Point(3136, 1672),new Point(3282, 1818),new Point(3292, 1860),new Point(3299, 1925),new Point(3300, 1943),new Point(3299, 2193),new Point(3282, 2232),new Point(3254, 2267),new Point(3211, 2306),new Point(3160, 2318),new Point(2901, 2317),new Point(2871, 2312),new Point(2836, 2290),new Point(2590, 2042),new Point(2541, 2029),new Point(2098, 2030),new Point(2098, 2088),new Point(2109, 2107),new Point(2132, 2119),new Point(2532, 2121),new Point(2571, 2132),new Point(2614, 2158),new Point(2655, 2195),new Point(2668, 2238),new Point(2675, 2322),new Point(2675, 2410),new Point(3172, 2411),new Point(3207, 2420),new Point(3234, 2440),new Point(3278, 2487),new Point(3292, 2528),new Point(3299, 2593),new Point(3299, 2717),new Point(3284, 2756),new Point(3251, 2797),new Point(3220, 2826),new Point(3195, 2839),new Point(3156, 2846),new Point(2620, 2846),new Point(2579, 2838),new Point(2547, 2819),new Point(2516, 2788),new Point(2486, 2749),new Point(2476, 2721),new Point(2480, 2606),new Point(1873, 2606),new Point(1858, 2624),new Point(1859, 2637),new Point(1873, 2650),new Point(2161, 2650),new Point(2184, 2636),new Point(2191, 2616),new Point(2192, 2606),new Point(2192, 1706.5),new Point(2211.5, 1671),new Point(2244, 1640),new Point(2274, 1606.5),new Point(2316.5, 1590),new Point(2512, 1591.5),new Point(2514, 1502.5),new Point(1463.5, 1509),new Point(1457, 1516.5),new Point(1158, 1513.5),new Point(1130.5, 1506.5),new Point(1094.5, 1490),new Point(1064.5, 1456.5),new Point(1036, 1419),new Point(1025, 1388.5),new Point(1020.5, 1376.5),new Point(1020.5, 296.5),new Point(993, 268),new Point(959.5, 265.5),new Point(508, 265.5),new Point(355.5, 265.5),new Point(355.5, 1306),new Point(367.5, 1321),new Point(386.5, 1323),new Point(394.5, 1309.5),new Point(399.5, 1283.5),new Point(400, 774),new Point(417.5, 728.5),new Point(454, 693.5),new Point(549.5, 596.5),new Point(702.5, 444.5),new Point(784, 356.5),new Point(827, 326),new Point(857, 313) ],
+            [   new Point(2386, 1792.5),new Point(2386, 2722),new Point(2374.5, 2756),new Point(2344.5, 2799),new Point(2301, 2837.5),new Point(2248, 2851),new Point(1806, 2849),new Point(1760, 2843.5),new Point(1725, 2823.5),new Point(1695, 2792.5),new Point(1669, 2752.5),new Point(1658.5, 2709),new Point(1657.5, 2666.5),new Point(1659, 2616),new Point(1655, 2569),new Point(1656.5, 2523.5),new Point(1682.5, 2472.5),new Point(1717.5, 2440),new Point(1758.5, 2414),new Point(1811, 2405),new Point(1852.5, 2406),new Point(2479, 2406),new Point(2482.5, 2366),new Point(2465, 2332.5),new Point(2422.5, 2322.5),new Point(2047.5, 2321.5),new Point(2001.5, 2316),new Point(1966.5, 2297.5),new Point(1936.5, 2262.5),new Point(1909, 2223.5),new Point(1900, 2175),new Point(1897.5, 2131),new Point(1899, 2032.5),new Point(1806, 2034),new Point(1757.5, 2027.5),new Point(1724, 2001.5),new Point(1683.5, 1960),new Point(1663.5, 1929),new Point(1659, 1885),new Point(1660, 1705),new Point(1681.5, 1656.5),new Point(1716.5, 1623.5),new Point(1754, 1597.5),new Point(1811.5, 1588.5),new Point(1941, 1590),new Point(1991.5, 1602.5),new Point(2043.5, 1629),new Point(2080, 1666),new Point(2093.5, 1707.5),new Point(2101.5, 1751.5),new Point(2106, 1796),new Point(2106.5, 1831),new Point(2610, 1831.5),new Point(2663.5, 1841.5),new Point(2715, 1871),new Point(2934.5, 2091.5),new Point(2981, 2117.5),new Point(3073.5, 2118.5),new Point(3092.5, 2106.5),new Point(3103.5, 2071),new Point(3099.5, 2026),new Point(3097.5, 1975),new Point(3089.5, 1930),new Point(3067.5, 1894),new Point(3011, 1841.5),new Point(2982, 1811.5),new Point(2936, 1797.5),new Point(2883.5, 1791.5),new Point(2386, 1793.5) ],
+            [   new Point(2682, 1594),new Point(2734, 1594),new Point(2734, 1502.5),new Point(2682, 1502.5),new Point(2682, 1594) ],
+            [   new Point(2677, 2609),new Point(3092, 2611),new Point(3100.5, 2634.5),new Point(3092, 2646),new Point(2703, 2646.5),new Point(2685, 2629.5),new Point(2677, 2609) ]
+        ];
+
+        let timer = setInterval(loop, 1000/30);
+        function loop()
+        {   context.drawImage(pista, 0, 0, canvas.width, canvas.height);
+            
+            if (PontosPista.length > 0)
+            {   
+                // context.fillStyle = "red";
+                // context.strokeStyle = "red";
+
+                // // Pega só o primeiro array de pontos
+                // let pontos = PontosPista[0];
+
+                // // Desenha os círculos nos pontos
+                // for (let i = 0; i < PontosPista.length; i++) {
+                //     context.beginPath();
+                //     context.arc(PontosPista[i].x, PontosPista[i].y, 3, 0, Math.PI * 2);
+                //     context.fill();
+                // }
+
+                // // Desenha a linha conectando todos os pontos em sequência
+                // context.beginPath();
+                // context.moveTo(PontosPista[0].x, PontosPista[0].y);
+                // for (let i = 1; i < PontosPista.length; i++) {
+                //     context.lineTo(PontosPista[i].x, PontosPista[i].y);
+                // }
+                // // Se quiser fechar o polígono, descomente a linha abaixo:
+                // // context.closePath();
+                // context.stroke();
+
+
+
+                context.fillStyle = "red";
+                context.strokeStyle = "red";
+
+                for (let i = 0; i < PontosPista.length; i++)
+                {
+                    // Desenha os círculos (pontos)
+                    for (let i2 = 0; i2 < PontosPista[i].length; i2++)
+                    {
+                        context.beginPath();
+                        context.arc(PontosPista[i][i2].x, PontosPista[i][i2].y, 10, 0, Math.PI * 2);
+                        context.fill(); 
+                    }
+
+                    // Desenha as linhas entre os pontos de um mesmo grupo
+                    context.beginPath();
+                    context.moveTo(PontosPista[i][0].x, PontosPista[i][0].y);
+                    for (let i2 = 1; i2 < PontosPista[i].length; i2++)
+                    {
+                        context.lineTo(PontosPista[i][i2].x, PontosPista[i][i2].y);
+                    }
+                    // Remova o closePath se você não quiser fechar o polígono
+                    // context.closePath();
+                    context.stroke();
+                }
+            }
+        }
+        document.addEventListener("click", putPoints);
+        function putPoints(event)
+        {   PontosPista.push(new Point(event.layerX, event.layerY))
+        }
     </script>
 </body>
 </html>
+<!-- 
+
+resultado = PontosPista.map(p => `new Point(${p.x}, ${p.y})`).join(', ');
+console.log(resultado);
+
+1:
+
+    
+    new Point(3718, 3614),
+    new Point(3740, 3664),
+    new Point(3794, 3662),
+    new Point(3796, 3600),
+    new Point(3756, 3588),
+    new Point(3720, 3614)
+
+
+
+
+2:
+
+    new Point(1934, 630), new Point(1686, 640), new Point(1454, 836), new Point(840, 1452), new Point(804, 1544), new Point(796, 2612), new Point(766, 2640), new Point(736, 2640), new Point(708, 2612), new Point(708, 532), new Point(1990, 532), new Point(2038, 582), new Point(2042, 2774), new Point(2068, 2844), new Point(2118, 2914), new Point(2182, 2976), new Point(2256, 3014), new Point(2406, 3026), new Point(2918, 3026), new Point(2918, 3008), new Point(5020, 3008), new Point(5020, 3182), new Point(4614, 3184), new Point(4530, 3226), new Point(4432, 3326), new Point(4392, 3402), new Point(4380, 3418), new Point(4376, 3448), new Point(4376, 3460), new Point(4376, 5240), new Point(4370, 5274), new Point(4352, 5284), new Point(4310, 5294), new Point(3758, 5294), new Point(3718, 5254), new Point(3752, 5220), new Point(4374, 5220), new Point(4955, 5228), new Point(4957, 5423), new Point(4972, 5508), new Point(5028, 5590), new Point(5093, 5653), new Point(5165, 5692), new Point(5258, 5697), new Point(5337, 5698), new Point(6323, 5700), new Point(6424, 5670), new Point(6508, 5597), new Point(6571, 5503), new Point(6608, 5412), new Point(6604, 5347), new Point(6611, 5283), new Point(6606, 5213), new Point(6598, 5135), new Point(6586, 5047), new Point(6559, 4963), new Point(6524, 4923), new Point(6406, 4832), new Point(6334, 4816), new Point(6268, 4810), new Point(6199, 4811), new Point(5358, 4809), new Point(5351, 4558), new Point(5316, 4385), new Point(5235, 4312), new Point(5138, 4258), new Point(5033, 4238), new Point(4951, 4238), new Point(4284, 4237), new Point(4222, 4212), new Point(4204, 4140), new Point(4204, 4063), new Point(5079, 4065), new Point(5179, 4092), new Point(5716, 4622), new Point(5827, 4642), new Point(6327, 4643), new Point(6430, 4613), new Point(6515, 4537), new Point(6587, 4450), new Point(6605, 4347), new Point(6605, 3803), new Point(6587, 3712), new Point(6557, 3625), new Point(6150, 3223), new Point(6088, 3197), new Point(5857, 3183), new Point(5858, 3012), new Point(6308, 3007), new Point(6457, 2937), new Point(6525, 2857), new Point(6558, 2763), new Point(6562, 1052), new Point(6510, 952), new Point(6430, 857), new Point(6345, 817), new Point(6298, 795), new Point(5815, 810), new Point(5715, 880), new Point(5219, 1372), new Point(5213, 1372), new Point(4693, 853), new Point(4635, 822), new Point(4569, 805), new Point(4121, 798), new Point(4021, 853), new Point(3946, 915), new Point(3896, 990), new Point(3869, 1085), new Point(3869, 1168), new Point(3869, 2245), new Point(3931, 2392), new Point(3992, 2462), new Point(4058, 2504), new Point(4124, 2525), new Point(4216, 2529), new Point(4606, 2531), new Point(4664, 2500), new Point(4755, 2430), new Point(5213, 1957), new Point(5227, 1960), new Point(5646, 2378), new Point(5758, 2493), new Point(5870, 2527), new Point(6803, 2527), new Point(6935, 2443), new Point(7010, 2366), new Point(7038, 2273), new Point(7045, 2234), new Point(7045, 1726), new Point(7018, 1649), new Point(6941, 1558), new Point(6878, 1505), new Point(6802, 1474), new Point(6745, 1465), new Point(3719, 1465), new Point(3624, 1474), new Point(3545, 1511), new Point(3479, 1569), new Point(3441, 1602), new Point(3403, 1670), new Point(3390, 1721), new Point(3387, 1763), new Point(3392, 2221), new Point(2425, 2221), new Point(2426, 2162), new Point(1948, 2166), new Point(1901, 2154), new Point(1867, 2119), new Point(1858, 2086), new Point(1851, 2079), new Point(1851, 1816), new Point(1881, 1791), new Point(1919, 1779), new Point(2453, 1781), new Point(2710, 1764), new Point(2841, 1663), new Point(2966, 1530), new Point(3135, 1369), new Point(3192, 1278), new Point(3193, 870), new Point(3187, 830), new Point(3171, 801), new Point(3065, 675), new Point(3007, 635), new Point(1934, 630)
+
+
+3:
+
+    new Point(1934, 1010), new Point(1850, 1028), new Point(1822, 1044), new Point(1222, 1640), new Point(1184, 1726),
+    new Point(1180, 2782), new Point(1174, 2820), new Point(1146, 2864), new Point(1022, 2990), new Point(936, 3018),
+    new Point(882, 3026), new Point(562, 3028), new Point(482, 2996), new Point(432, 2950), new Point(348, 2850),
+    new Point(322, 2814), new Point(318, 506), new Point(422, 382), new Point(536, 272), new Point(698, 174),
+    new Point(782, 152), new Point(2168, 150), new Point(2240, 158), new Point(2400, 308), new Point(2424, 376),
+    new Point(2434, 412), new Point(2434, 2580), new Point(2492, 2644), new Point(6132, 2612), new Point(6172, 2576),
+    new Point(6172, 1234), new Point(6118, 1186), new Point(6052, 1186), new Point(5962, 1212), new Point(5918, 1242),
+    new Point(5858, 1304), new Point(5828, 1334), new Point(5694, 1462), new Point(5706, 1860), new Point(5962, 2114)
+
+
+4:
+
+    new Point(1714, 626), new Point(2950, 626), new Point(3078, 698), new Point(3170, 804), new Point(3192, 902),
+    new Point(3192, 1246), new Point(3178, 1298), new Point(3088, 1394), new Point(2944, 1540), new Point(2788, 1706),
+    new Point(2740, 1746), new Point(2680, 1766), new Point(2640, 1772), new Point(1896, 1778), new Point(1862, 1820),
+    new Point(1846, 1912), new Point(1852, 2080), new Point(1868, 2124), new Point(1890, 2144), new Point(1940, 2162),
+    new Point(2004, 2166), new Point(2016, 2158), new Point(2422, 2160), new Point(2422, 2220), new Point(3386, 2226),
+    new Point(3386, 1732), new Point(3416, 1642), new Point(3466, 1580), new Point(3558, 1500), new Point(3650, 1466),
+    new Point(6784, 1466), new Point(6846, 1484), new Point(6964, 1576), new Point(7030, 1676), new Point(7040, 1720),
+    new Point(7042, 2266), new Point(7024, 2314), new Point(7012, 2350), new Point(6988, 2390), new Point(6932, 2442),
+    new Point(6896, 2480), new Point(6814, 2516), new Point(6794, 2528), new Point(5868, 2530), new Point(5808, 2510),
+    new Point(5760, 2492), new Point(5744, 2480), new Point(5220, 1952), new Point(5208, 1952), new Point(5002, 2164),
+    new Point(4980, 2182), new Point(4946, 2210), new Point(4922, 2248), new Point(4858, 2312), new Point(4768, 2404),
+    new Point(4676, 2488), new Point(4644, 2510), new Point(4594, 2522), new Point(4188, 2530), new Point(4044, 2498),
+    new Point(3960, 2442), new Point(3900, 2364), new Point(3872, 2282), new Point(3864, 2244), new Point(3868, 1080),
+    new Point(3912, 956), new Point(3978, 882), new Point(4064, 816), new Point(4116, 798), new Point(4576, 798),
+    new Point(4668, 832), new Point(4688, 848), new Point(5210, 1372), new Point(5802, 804), new Point(6298, 804),
+    new Point(6372, 826), new Point(6468, 896), new Point(6526, 970), new Point(6554, 1036), new Point(6560, 1048),
+    new Point(6558, 2756), new Point(6530, 2836), new Point(6502, 2886), new Point(6442, 2932), new Point(6400, 2974),
+    new Point(6346, 2992), new Point(6306, 3008), new Point(5860, 3010), new Point(5860, 3192), new Point(6060, 3196),
+    new Point(6140, 3232), new Point(6194, 3270), new Point(6272, 3344), new Point(6564, 3636), new Point(6584, 3720),
+    new Point(6598, 3850), new Point(6600, 3886), new Point(6598, 4386), new Point(6564, 4464), new Point(6508, 4534),
+    new Point(6422, 4612), new Point(6320, 4636), new Point(5802, 4634), new Point(5742, 4624), new Point(5672, 4580),
+    new Point(5180, 4084), new Point(5082, 4058), new Point(4196, 4060), new Point(4196, 4176), new Point(4218, 4214),
+    new Point(4264, 4238), new Point(5064, 4242), new Point(5142, 4264), new Point(5228, 4316), new Point(5310, 4390),
+    new Point(5336, 4476), new Point(5350, 4644), new Point(5350, 4820), new Point(6344, 4822), new Point(6414, 4840),
+    new Point(6468, 4880), new Point(6556, 4974), new Point(6584, 5056), new Point(6598, 5186), new Point(6598, 5434),
+    new Point(6568, 5512), new Point(6502, 5594), new Point(6440, 5652), new Point(6390, 5678), new Point(6312, 5692),
+    new Point(5240, 5692), new Point(5158, 5676), new Point(5094, 5638), new Point(5032, 5576), new Point(4972, 5498),
+    new Point(4952, 5442), new Point(4960, 5212), new Point(3746, 5212), new Point(3716, 5248), new Point(3718, 5274),
+    new Point(3746, 5300), new Point(4322, 5300), new Point(4368, 5272), new Point(4382, 5232), new Point(4384, 5212)
+
+-->
