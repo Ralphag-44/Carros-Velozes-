@@ -167,11 +167,13 @@ class Entity {
             let y1 = this.points[i].y;
             let x2 = this.points[(i + 1) % this.points.length].x;
             let y2 = this.points[(i + 1) % this.points.length].y;
+            //console.log(entity)
             for (let i2 = 0; (i2 < entity.length) && (!colidiu); i2++) {
                 let x3 = entity[i2].x;
                 let y3 = entity[i2].y;
                 let x4 = entity[(i2 + 1) % entity.length].x;
                 let y4 = entity[(i2 + 1) % entity.length].y;
+                
                 let denominador = ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
                 if (denominador != 0) {
                     let uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denominador;
@@ -189,12 +191,17 @@ class Entity {
 
         let fig_a = this.hitbox.slice(0, this.hitbox.length-1);
         let fig_b; 
-        if(!(fig_b instanceof Car))
+        if((fig_b instanceof Car))
         {
              fig_b = entity.hitbox.slice(0, entity.hitbox.length-1);
         }
         else{
-            fig_b = entity.points.slice(0, entity.points.length);
+            if(entity?.points)
+            {   fig_b = entity.points.slice(0, entity.points.length);
+            }
+            else
+            {   fig_b = entity;
+            }
         }
 
         for(let i = 0; (i < fig_a.length) && (!colidiu); i++)

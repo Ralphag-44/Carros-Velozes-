@@ -37,6 +37,12 @@ class Car extends Entity {
     };
 
     update() {
+		for(let i = 0; (i < pontosPista.length); i++)
+		{	let collision = this.collision_c(pontosPista[i]);
+			if(collision[0])
+			{	this.coli_aplic(collision);
+			}
+		}
 
         this.updateWeapon();
         this.mov_control();
