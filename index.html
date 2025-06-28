@@ -1,49 +1,462 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cópia do Death Rally so que ruim</title>
 </head>
+
 <body>
-    <canvas id="canva"></canvas>
+    <style id="style">
+        * {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <canvas id="canvas"></canvas>
     <script src="Entity.js"></script>
+    <script src="Sounds.js"></script>
+    <script src="Projectile.js"></script>
+    <script src="Guns.js"></script>
     <script src="Car.js"></script>
+    <script src="Cars.js"></script>
     <script src="Hud.js"></script>
+    <script src="Camera.js"></script>
+    <script src="PowerUps.js"></script>
+    <script src="Obst.js"></script>
+    <script src="Buttons.js"></script>
     <script>
-        let canvas = document.getElementById("canva");
-        canva.width = innerWidth;
-        canva.height = innerHeight;
+        let canvas = document.getElementById("canvas");
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
         let context = canvas.getContext("2d");
         let keys = [];
+        let carsKeys = 
+        [   {left: 65, right: 68, up: 87, down: 83, frontShoot: 81, backShoot: 69}, 
+            {left: 70, right: 72, up: 84, down: 71, frontShoot: 82, backShoot: 89}, 
+            {left: 74, right: 76, up: 73, down: 75, frontShoot: 85, backShoot: 79}, 
+            {left: 37, right: 39, up: 38, down: 40, frontShoot: 17, backShoot: 16}, 
+        ];
         let FPS = 30;
-        let timer = setInterval(menu, 1000/FPS);
-
+        let timer = setInterval(localStorage.room == "loop" ? loop : menu, 1000 / FPS);
+        let players;
+        let cameras;
+        let entities = [];
+        let totalLaps = 2;
+        
+        // let cameras = [];
+        // let players = new Cars([0, 0]);
+        // let entities = players.list.concat([])
+        // for(let i = 0; (i < players.list.length); i++)
+        // {   cameras.push(new Camera(i))
+        // }
+        
+        let world = {pista: new Image(), width: 7242, height: 6054}
+        world.pista.src = "imgs/backgrounds/pista_grande.png";
+        world.pista.onload = () => {};
+		const menu_background = new Image();
+		menu_background.src = "imgs/backgrounds/bg.png";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        let pista = [];
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
-        // let pontosPista = [];
-
-        function menu()
-        {   
+        //pontosPista.map((v) => "new Point("+v.x+", "+v.y+")").join(",")
+        let playersQuantity = 2;
+        let pontosPista = [new Point(967, 315),new Point(843, 320),new Point(727, 418),new Point(420, 726),new Point(402, 772),new Point(398, 1306),new Point(383, 1320),new Point(368, 1320),new Point(354, 1306),new Point(354, 266),new Point(995, 266),new Point(1019, 291),new Point(1021, 1387),new Point(1034, 1422),new Point(1059, 1457),new Point(1091, 1488),new Point(1128, 1507),new Point(1203, 1513),new Point(1459, 1513),new Point(1459, 1504),new Point(2510, 1504),new Point(2510, 1591),new Point(2307, 1592),new Point(2265, 1613),new Point(2216, 1663),new Point(2196, 1701),new Point(2190, 1709),new Point(2188, 1724),new Point(2188, 1730),new Point(2188, 2620),new Point(2185, 2637),new Point(2176, 2642),new Point(2155, 2647),new Point(1879, 2647),new Point(1859, 2627),new Point(1876, 2610),new Point(2187, 2610)];
+        let buttons = [
+            new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2-canvas.height*.3, "", "", "JOGAR", loop), 
+            new PlayersButton(innerWidth - innerWidth*.25, innerHeight/2-canvas.height*.12, "", ""), 
+            new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.06, "", "", "EQUIPAMENTOS", "equipaments"), 
+            new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.25, "", "", "CONFIGURAÇÕES", "configurations")
+        ];
+        let sounds = new Sounds();
+        let MenuOptions = 0;
+        let CarOptions = -1;
+        let buttonsCanSwitch = 0;
+        let buttonsSwitchLimit = 4;
+        let sound = .1;
+        let mouse = 
+        {   x: 0,
+            y: 0,
+            click: false,
+            colliding: false,
+            collide(obj)
+            {   return (this.x >= obj.x && this.x <= obj.x+obj.width) 
+                && (this.y >= obj.y && this.y <= obj.y+obj.height);
+            }   
         }
-        function loop()
-        {   
+          
+
+        let carsSet = [0, 1, 2, 3];
+        let switching = false;
+
+
+        function atualizePosition()
+        {   if(switching)
+            {   if(buttons.length == 7)
+                {   if(buttonsCanSwitch == buttonsSwitchLimit)
+                    {   if(keys[39])
+                        {   CarOptions = (CarOptions + 1)%4;
+                            carsSet[MenuOptions] = CarOptions;
+                            buttonsCanSwitch = 0;
+                        }
+                        else
+                        {   if(keys[37])
+                            {   CarOptions = (CarOptions + 3)%4;
+                                carsSet[MenuOptions] = CarOptions;
+                                buttonsCanSwitch = 0;
+                            }
+                        }
+                        if(keys[38] || keys[40])
+                        {   MenuOptions = MenuOptions == buttons[5].id ? 6 : buttons[5].id;
+                            buttonsCanSwitch = 0;
+                        }
+                        if(MenuOptions == 6 && keys[32])
+                        {   MenuOptions = buttons[5].id;
+                            buttons[MenuOptions].clicked();
+                            buttonsCanSwitch = 0;
+                        }
+                    }
+                    if(mouse.colliding)
+                    {   if(mouse.click && buttonsCanSwitch == buttonsSwitchLimit)
+                        {   if(MenuOptions == 6)
+                            {   buttons[MenuOptions].clicked();
+                                MenuOptions = 0;
+                                //buttonsCanSwitch = 0;
+                                mouse.click = false;
+                            }
+                            if(MenuOptions == buttons[5]?.id)
+                            {   CarOptions = (CarOptions + 1)%4;
+                                carsSet[MenuOptions] = CarOptions;
+                                buttonsCanSwitch = 0;
+                            }
+                        }
+                    }
+                }
+                else 
+                {   if(buttons.length >= 24 && keys.includes(true))
+                    {   buttons[MenuOptions].text = "";
+                        if(buttonsCanSwitch == buttonsSwitchLimit)
+                        {   let playerPos = Math.trunc((MenuOptions)/6);
+                            let newKey = keys.indexOf(true);
+                            let keysT = ["up", "down", "left", "right", "frontShoot", "backShoot"];
+                            for(let i = 0; (i < carsKeys.length); i++)
+                            {   for(let i2 = 0; (i2 < keysT.length); i2++)
+                                {   if(carsKeys[i][keysT[i2]] == newKey)
+                                    {   carsKeys[i][keysT[i2]] = "";
+                                    }
+                                }
+                            }
+                            switch(MenuOptions%6)
+                            {   case 0: 
+                                    carsKeys[playerPos].up = newKey;
+                                break;
+                                case 1: 
+                                    carsKeys[playerPos].down = newKey;
+                                break;
+                                case 2: 
+                                    carsKeys[playerPos].left = newKey;
+                                break;
+                                case 3: 
+                                    carsKeys[playerPos].right = newKey;
+                                break;
+                                case 4: 
+                                    carsKeys[playerPos].frontShoot = newKey;
+                                break;
+                                case 5: 
+                                    carsKeys[playerPos].backShoot = newKey;
+                                break;
+                            }
+                            for(let i = 0; (i < buttons.length-1); i++)
+                            {   let local = Math.trunc(i/6);
+                                switch(i%6)
+                                {   case 0:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                                    break;
+                                    case 1:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                                    break;
+                                    case 2:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                                    break;
+                                    case 3:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                                    break;
+                                    case 4:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                                    break;
+                                    case 5:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                                    break;
+                                }
+                            }
+                            buttonsCanSwitch = 0;
+                            switching = false;
+                        }
+                    }
+                }
+            }
+            else
+            {   if(buttonsCanSwitch == buttonsSwitchLimit)
+                {   if(buttons.length == 5)
+                    {   if(MenuOptions != 4)
+                        {   if(keys[39])
+                            {   MenuOptions = (MenuOptions+1)%4
+                                buttonsCanSwitch = 0; 
+                            }
+                            else
+                            {   if(keys[37])
+                                {   MenuOptions = (MenuOptions+3)%4
+                                    buttonsCanSwitch = 0; 
+                                }
+                            }
+                        }
+                        if(keys[38] || keys[40])
+                        {   MenuOptions = (!(Math.trunc(MenuOptions/4)))*4
+                            buttonsCanSwitch = 0; 
+                        }
+                    }
+                    else
+                    { if(buttons.length >= 24)
+                        {   if(MenuOptions == buttons.length-1 && (keys[39]+keys[40]+keys[37]+keys[38]))
+                            {   MenuOptions = 0;
+                                buttonsCanSwitch = 0;   
+                            }
+                            else if (MenuOptions == 0 && (keys[37]+keys[38]))
+                            {   MenuOptions = buttons.length-1;
+                                buttonsCanSwitch = 0;   
+                            }
+                            else
+                            {   if(keys[37])
+                                {   MenuOptions = (MenuOptions-6+(buttons.length-1))%(buttons.length-1);
+                                    buttonsCanSwitch = 0;
+                                }
+                                else
+                                {   if(keys[39])
+                                    {   MenuOptions = (MenuOptions+6)%(buttons.length-1);
+                                        buttonsCanSwitch = 0;
+                                    }
+                                }
+                                if(keys[38])
+                                {   if(Math.trunc(MenuOptions/6)*6==MenuOptions)
+                                    {   MenuOptions = Math.ceil((MenuOptions+1)/6)*6-1;
+                                    }
+                                    else
+                                    {   MenuOptions = (MenuOptions-1+(buttons.length-1))%(buttons.length-1);
+                                    }
+                                    buttonsCanSwitch = 0;
+                                }
+                                else
+                                {   if(keys[40])
+                                    {   if(Math.ceil(MenuOptions/6)*6-1==MenuOptions)
+                                        {   MenuOptions = Math.trunc(MenuOptions/6)*6;
+                                        }
+                                        else
+                                        {   MenuOptions = (MenuOptions+1)%(buttons.length-1);
+                                        }
+                                        buttonsCanSwitch = 0;
+                                    }
+                                }   
+                            }
+                        }
+                        else
+                        {   if(keys[38])
+                            {   MenuOptions = (MenuOptions-1+buttons.length)%buttons.length;
+                                buttonsCanSwitch = 0;
+                            }
+                            if(keys[40])
+                            {   MenuOptions = (MenuOptions+1)%buttons.length;
+                                buttonsCanSwitch = 0;
+                            }
+                            if(keys[39])
+                            {   if(buttons[MenuOptions].text == playersQuantity + " PLAYERS" || buttons[MenuOptions].text == "SOM")
+                                {   buttons[MenuOptions].clicked(1);
+                                    buttonsCanSwitch = 0;
+                                }
+                            }
+                            if(keys[37])
+                            {   if(buttons[MenuOptions].text == playersQuantity + " PLAYERS" || buttons[MenuOptions].text == "SOM")
+                                {   buttons[MenuOptions].clicked(-1);
+                                    buttonsCanSwitch = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                if((keys[32] && buttonsCanSwitch == buttonsSwitchLimit) || (mouse.click && mouse.colliding))
+                {   let parameter;
+                    if(buttons[MenuOptions].text == "SOM")
+                    {   parameter = 0;
+                    }
+                    if((mouse.click && mouse.colliding) && buttons[MenuOptions].text == playersQuantity + " PLAYERS")
+                    {   parameter = 1;
+                    }
+                    buttons[MenuOptions].clicked(parameter);
+                    buttonsCanSwitch = 0;
+                }
+            }
+            
+            buttonsCanSwitch += buttonsCanSwitch < buttonsSwitchLimit;
+            mouse.click = false;
+        }
+        function menu()
+        {   context.drawImage(menu_background, 0, 0, canvas.width, canvas.height);
+            if(buttons[0].text == "PLAYER 1")
+            {   let carsImgs = [new Image(), new Image(), new Image(), new Image()];
+                let weapons1Imgs = [new Image(), new Image(), new Image(), new Image()];
+                let weapons2Imgs = [new Image(), new Image(), new Image(), new Image()];
+                
+                for(let i = 0; (i < carsImgs.length); i++)
+                {   
+                    switch (carsSet[i])        
+                    {   case 0:
+                            carsImgs[i].src = "imgs/cars/viper.png";
+                            weapons1Imgs[i].src = "imgs/guns/machinegun.png";
+                            weapons2Imgs[i].src = "imgs/guns/flamethrower.png";
+                        break;
+                        case 1:
+                            carsImgs[i].src = "imgs/cars/challenger.png";
+                            weapons1Imgs[i].src = "imgs/guns/shotgun.png";
+                            weapons2Imgs[i].src = "imgs/guns/serraparada.png";
+                        break;
+                        case 2:
+                            carsImgs[i].src = "imgs/cars/ranger.png";
+                            weapons1Imgs[i].src = "imgs/guns/rifle.png";
+                            weapons2Imgs[i].src = "imgs/guns/pem.png";
+                        break;
+                        case 3:
+                            carsImgs[i].src = "imgs/cars/vanderlei.png";
+                            weapons1Imgs[i].src = "imgs/guns/rocket.png";
+                            weapons2Imgs[i].src = "imgs/guns/minelauncher.png";
+                        break;
+                    }
+                }
+                
+                context.fillStyle = "white";
+                for(let i = 0; (i < carsImgs.length); i++)
+                {   context.fillRect(buttons[i].x, buttons[i].y+125, buttons[i].width, buttons[i].width+50)
+                    context.save();
+                    context.translate(buttons[i].x+buttons[i].width/2, buttons[i].y+buttons[i].height/2)
+                    context.rotate(Math.PI*1.5)
+                    context.drawImage(carsImgs[i], -buttons[i].width-100, -buttons[i].height/2, buttons[i].width, buttons[i].height);
+                    context.drawImage(weapons1Imgs[i], -buttons[i].width-50, -buttons[i].height/2-75, buttons[i].width/1.5, buttons[i].height/1.5);
+                    context.drawImage(weapons2Imgs[i], -buttons[i].width-50, -buttons[i].height/2+110, buttons[i].width/1.5, buttons[i].height/1.5);
+                    context.restore();
+                }
+            }
+            else
+            {   if(buttons.length < 24)
+                {   context.fillStyle = "white";
+                    context.font = "100px Times new Roman"
+                    context.fillText("DEATH RALLY", 400, 160);
+                    context.fillText("(só que ruim)", 400, 260);                
+                }
+            }
+            
+            atualizeButtons();
+            atualizePosition();
+            
+            if(buttons.length >= 24)
+            {   context.fillStyle = "white";
+                context.font = (canvas.width+canvas.height)/105+"px Times New Roman";
+                
+                context.fillText("CIMA:", canvas.width*.32, canvas.height*.175);
+                context.fillText("BAIXO:", canvas.width*.32, canvas.height*.325);
+                context.fillText("ESQUERDA:", canvas.width*.32, canvas.height*.475);
+                context.fillText("DIREITA:", canvas.width*.32, canvas.height*.625);
+                context.fillText("ARMA FRONTAL:", canvas.width*.32, canvas.height*.775);
+                context.fillText("ARMA TRASEIRA:", canvas.width*.32, canvas.height*.925);
+                context.textAlign = "left";
+                context.fillText("PLAYER 1", canvas.width*.415, canvas.height*.075);
+                context.fillText("PLAYER 2", canvas.width*.565, canvas.height*.075);
+                context.fillText("PLAYER 3", canvas.width*.715, canvas.height*.075);
+                context.fillText("PLAYER 4", canvas.width*.865, canvas.height*.075);
+            }
+        }
+        function atualizeButtons()
+        {   for(let i = 0; (i < buttons.length); i++)
+            {   buttons[i].draw()    
+                if(i == MenuOptions)   
+                {   buttons[i].selected = true;
+                }
+                else
+                {  buttons[i].selected = false; 
+                }
+            }
+            
+        }
+        function loop() {
+            // context.fillStyle = 'darkgreen';
+            // context.fillRect(0, 0, canvas.width, canvas.height);
+            // context.drawImage(world.pista, 0, 0, world.width, world.height);
+            // for(let i = 0; (i < cameras.length); i++)
+            // {   cameras[i].update();
+            //     cameras[i].draw();
+            // }
+            players.update();
+
+            for(let i =0; i < entities.length; i++)
+            { 
+               if(entities[i] instanceof PowerUp || entities[i] instanceof Obs)
+               {
+                entities[i].update()
+               }
+            }
+
+            for(let i = 0; (i < cameras.length); i++)
+            {   cameras[i].update();
+                cameras[i].draw();
+            }
         }
 
         document.addEventListener("keydown", keyD);
         document.addEventListener("keyup", keyU);
+        document.addEventListener("mousemove", mouseM);
         function keyD(event)
         {   keys[event.keyCode] = true;
+          //  console.log(event.keyCode);
         }
         function keyU(event)
         {   keys[event.keyCode] = false;
         }
-        
-        // document.addEventListener("click", putPoint);
-        // function putPoint(event)
-        // {   pontosPista.push(new Point(event.clientX, event.clientY))
-        // }
+        function mouseM(event)
+        {   mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            for(let i = 0; (i < buttons.length); i++)
+            {   if(!switching)
+                {   if(mouse.collide(buttons[i]))
+                    {   MenuOptions = i;
+                        mouse.colliding = true;
+                        i = buttons.length;
+                    }   
+                    else
+                    {   mouse.colliding = false;
+                    }
+                }
+                else
+                {   if(buttons.length == 7)
+                    {   if(mouse.collide(buttons[i]) && (i == buttons[5].id || i == 6 || i == 5))
+                        {   MenuOptions = i != 5 ? i : buttons[5].id;
+                            mouse.colliding = true;
+                            i = buttons.length;
+                        }   
+                        else
+                        {   mouse.colliding = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        document.addEventListener("click", clicked);
+        function clicked()
+        {   mouse.click = true;
+        }
+
     </script>
 </body>
+
 </html>
 
 <!-- 
@@ -93,4 +506,5 @@ Slow motion quando morrer / rewind
     Caixote
     
 
+    
 -->
