@@ -12,20 +12,10 @@ class Projectiles {
             for (let j = 0; j < players.list.length; j++) {
                 if (players.list[j] != this.owner) {
                     if (this.list[i].collision(players.list[j].points)) {
-
-                    if(players.list[j].escudoTempo)
-                    {
-                        this.list[i].angle+=(Math.random()*180)+90
-                    }
-                    else {
                         players.list[j].life -= this.list[i].damage;
                         hit = true;
-
-                    }
-
                     } else {
                         for (let k = 0; k < players.list[j].weapons.length; k++) {
-                            // console.log(players.list[j])
                             if (this.list[i].collision(players.list[j].weapons[k].points)) {
                                 players.list[j].weapons[k].life -= this.list[i].damage;
                                 hit = true;
@@ -38,16 +28,19 @@ class Projectiles {
             }
 
             if (hit) {
-                //console.log(this.list);
+                console.log(this.list);
                 for(let i2 = 0; (i2 < entities.length); i2++)
                 {   let center = entities[i2].center();
                     let bCenter = this.list[i].center();
-                    console.log(center.x , bCenter.x, center.y , bCenter.y, entities[i2], entities[i])
                     if(center.x == bCenter.x && center.y == bCenter.y)
                     {   entities.splice(i2, 1);
                         i2 = entities.length;
-                       // console.log("entrou porra") //funcionou!
                     }
+                }
+                if (this.list[i].points.length == 4) {
+                    let kabum = new Explosion(this.list[i].center().x-50, this.list[i].center().y-50, 100, 100)
+                    explosions.list.push(kabum);
+                    entities.push(kabum)
                 }
                 this.list.splice(i, 1);
                 i--;
@@ -157,7 +150,6 @@ class MissileBullet extends Projectile {
     };
 
     update() {
-        //console.log("aaaa")
         this.velocity += this.acceleration;
 
         let dx = Math.cos(this.angle * Math.PI / 180) * this.velocity;

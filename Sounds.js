@@ -22,5 +22,10 @@ class Sounds {
                 audio.play();
             },
         }
+        this.explosion = function () {
+            let audio = new Audio("sounds/explosao.mp3");
+            audio.volume = sound; //trocar por variavel de volume
+            audio.play();
+        }
     }
 }

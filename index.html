@@ -17,6 +17,7 @@
     <canvas id="canvas"></canvas>
     <script src="Entity.js"></script>
     <script src="Sounds.js"></script>
+    <script src="Explosion.js"></script>
     <script src="Projectile.js"></script>
     <script src="Guns.js"></script>
     <script src="Car.js"></script>
@@ -27,6 +28,7 @@
     <script src="PowerUps.js"></script>
     <script src="Obst.js"></script>
     <script src="Buttons.js"></script>
+    <script src="TimeController.js"></script>
     <script>
         let canvas = document.getElementById("canvas");
         canvas.width = innerWidth;
@@ -42,8 +44,10 @@
         let FPS = 30;
         let timer = setInterval(localStorage.room == "loop" ? loop : menu, 1000 / FPS);
         let players;
+        let explosions = new Explosions();
         let cameras;
         let entities = [];
+        let time;
         let effects = new Particles()
         let totalLaps = 2;
         let debug = false;
@@ -397,7 +401,13 @@
             // {   cameras[i].update();
             //     cameras[i].draw();
             // }
-            players.update();
+            explosions.update();
+
+            if(!time.replaying)
+            {   players.update();
+            }
+
+            time.update();
 
             effects.update();
 

@@ -86,14 +86,26 @@ class Cars {
     };
 
     update() {
-        for (let i = 0; i < this.list.length; i++) {
-            this.list[i].update();
-            if (this.list[i].life <= 0) {
+        for (let i = 0; i < this.list.length; i++) 
+        {   this.list[i].update();
+            if (this.list[i].life <= 0) 
+            {   let kabum = new Explosion(this.list[i].center().x - 75, this.list[i].center().y - 75, 150, 150)
+                explosions.list.push(kabum);
+                entities.push(kabum)
+                sounds.explosion();
+                for (let i2 = 0; (i2 < entities.length); i2++) 
+                {   let center = entities[i2].center();
+                    let bCenter = this.list[i].center();
+                    if (center.x == bCenter.x && center.y == bCenter.y) 
+                    {   entities.splice(i2, 1);
+                        i2 = entities.length;
+                    }
+                }
                 this.list.splice(i, 1);
-                //new Explosion()
+                i--;
             }
         }
-
+        
         let tempList = [...this.list];
 
         for (let i = 0; i < tempList.length;) {
