@@ -4,7 +4,7 @@ class Gun extends Entity {
         this.angle = owner.angle;
         this.owner = owner;
         this.bullets = new Projectiles(this.owner);
-        
+
         this.rechargeCount = 0;
         this.coolDownCount = 0;
 
@@ -75,8 +75,7 @@ class Gun extends Entity {
         context.fill();
     };
 
-    draw(id)
-    {   
+    draw(id) {
         super.draw(id);
         //this.bullets.draw(id);
     }
@@ -151,7 +150,7 @@ class ShotGun extends Gun {
             y: (this.points[1].y + this.points[2].y) / 2
         };
         sounds.guns.shotgun();
-        
+
         for (let i = 0; i < this.bulletsPerShot; i++) {
             let bullet = new ShotGunBullet(this.shootOrigin, this.angle - (this.dispersion * (i - ((this.bulletsPerShot - 1) / 2))) / this.bulletsPerShot)
             this.bullets.list.push(bullet);
@@ -193,7 +192,10 @@ class Rifle extends Gun {
             y: (this.points[1].y + this.points[2].y) / 2
         };
         sounds.guns.rifle();
-        this.bullets.list.push(new RifleBullet(this.shootOrigin, this.angle));
+
+        let bullet = new RifleBullet(this.shootOrigin, this.angle);
+        this.bullets.list.push(bullet);
+        entities = entities.concat(bullet);
 
         this.fireCounters();
         this.warmCount += this.warmStep;
@@ -306,7 +308,7 @@ class Saw extends SecondGun {
 
 }
 
-class Flamethrower extends SecondGun {
+class FlameThrower extends SecondGun {
     constructor(owner) {
         let points = [
             new Point(owner.points[3].x + 5, owner.points[3].y + 20),
@@ -316,15 +318,72 @@ class Flamethrower extends SecondGun {
         ];
         super(points, owner, "guns/flamethrower");
         this.damagePerSecond = 30;
-
         this.life = 100;
+
+        this.flame = new Flame(this, this.owner);
     }
 
     update() {
         if (this.active) {
-            
+            for (let i = 0; i < players.list.length; i++) {
+                if (!(players.list[i] == this.owner)) {
+                    if (this.flame.collision(players.list[i].points)) {
+                        players.list[i].life -= this.flame.damagePerSecond / FPS;
+                    }
+                    for (let j = 0; j < players.list[i].weapons.length; j++) {
+                        if (this.flame.collision(players.list[i].weapons[j].points)) {
+                            players.list[i].weapons[j].life -= this.flame.damagePerSecond / FPS;
+                        }
+                    }
+                }
+            }
         }
     }
+
+    translate(dx, dy) {
+        super.translate(dx, dy);
+        this.flame.translate(dx, dy);
+    }
+
+    rotate(angle) {
+        super.rotate(angle);
+        this.flame.rotate(angle);
+    }
+
+
+    draw(id) {
+        super.draw(id);
+        if (this.active) {
+            this.flame.draw(id);
+        }
+    }
+}
+
+class Flame extends Entity {
+    constructor(owner, carOwner) {
+        let points = [
+            new Point(owner.points[1].x, owner.points[1].y),
+            new Point(owner.points[1].x + 70, owner.points[1].y),
+            new Point(owner.points[2].x + 70, owner.points[2].y),
+            new Point(owner.points[2].x, owner.points[2].y),
+        ]
+        super(points, "guns/flame");
+        this.damagePerSecond = 40;
+        this.owner = owner;
+        this.carOwner = carOwner;
+        this.angle = carOwner.angle;
+    }
+
+    rotate(angle) {
+        let center = this.carOwner.center();
+        this.translate(-center.x, -center.y);
+        console.log(this.points)
+        for (let i = 0; i < this.points.length; i++) {
+            this.points[i].rotate(angle);
+        };
+        this.translate(center.x, center.y);
+        this.angle = (this.angle + angle + 360) % 360;
+    };
 }
 
 class PEM {
@@ -337,8 +396,8 @@ class PEM {
     }
 }
 
-class MineLauncher extends SecondGun{
-    constructor(owner){
+class MineLauncher extends SecondGun {
+    constructor(owner) {
         let points = [
             new Point(owner.points[3].x + 5, owner.points[3].y + 20),
             new Point(owner.points[2].x - 5, owner.points[2].y + 20),
@@ -349,7 +408,7 @@ class MineLauncher extends SecondGun{
         this.list = [];
     }
 
-    update(){
+    update() {
         if (this.active) {
             this.spawMine();
             this.active = false;
@@ -377,28 +436,28 @@ class MineLauncher extends SecondGun{
                     if (hit) break;
                 }
             }
-            
+
             if (hit) {
                 console.log("kabum")
                 entities.splice(entities.indexOf(this.list[i]), 1)
                 this.list.splice(i, 1);
-                i--;    
+                i--;
             }
         }
     }
 
     spawMine() {
         let center = this.center();
-        let mine = new Mine(center.x, center.y, 40, 40, this.owner);
+        let mine = new Mine(center.x, center.y, 30, 30, this.owner);
         this.list.push(mine);
         console.log(entities)
         entities = entities.concat(mine);
         console.log(entities)
     }
 
-    draw(id){
+    draw(id) {
         // for (let i = 0; i < this.list.length; i++) {
-            //this.list[i].draw(id);
+        //this.list[i].draw(id);
         // }
         super.draw(id);
     }
@@ -407,16 +466,16 @@ class MineLauncher extends SecondGun{
 class Mine extends Entity {
     constructor(x, y, width, height, owner) {
         let points = [
-            new Point(x-width/2, y-height/2),
-            new Point(x+width/2, y-height/2),
-            new Point(x+width/2, y+height/2),
-            new Point(x-width/2, y+height/2),
+            new Point(x - width / 2, y - height / 2),
+            new Point(x + width / 2, y - height / 2),
+            new Point(x + width / 2, y + height / 2),
+            new Point(x - width / 2, y + height / 2),
         ];
         super(points, "guns/tnt");
         this.x = x;
         this.y = y;
         this.owner = owner;
-        
+
         this.damage = 80;
         this.life = 20;
     }

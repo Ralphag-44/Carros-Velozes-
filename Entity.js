@@ -29,18 +29,23 @@ class Entity {
 
     draw(id) {
         context.save();
+        context.beginPath();
+        context.rect(0, 0, cameras[id].width, cameras[id].height);
+        context.clip();
         let translate = {x: this.center().x -cameras[id]?.x, y: this.center().y -cameras[id]?.y}
         context.translate(translate.x, translate.y);
         context.rotate((this.angle * Math.PI / 180));
-        let cutX = (this.center().x-this.width/2)-cameras[id].x;
-        let cutY = (this.center().y-this.height/2)-cameras[id].y;
-        let sx = cutX < 0 ? -cutX : 0
-        let sy = cutY < 0 ? -cutY : 0;
-        let sw = this.width - sx;
-        let sh = this.height - sy;
-        context.drawImage(this.img, sx, sy, sw, sh, -this.width/2+sx, -this.height/2+sh, sw, sh)
-        if(this.img.src.includes("tnt"))
-            console.log(sx, sy, sw)
+
+        // let cutX = (this.center().x-this.width/2)-cameras[id].x;
+        // let cutY = (this.center().y-this.height/2)-cameras[id].y;
+        // let sx = cutX < 0 ? -cutX : 0
+        // let sy = cutY < 0 ? -cutY : 0;
+        // let sw = this.width - sx;
+        // let sh = this.height - sy;
+        // context.drawImage(this.img, sx, sy, sw, sh, -this.width/2+sx, -this.height/2+sh, sw, sh)
+
+        context.drawImage(this.img, -this.width/2, -this.height/2, this.width, this.height)
+        
         context.restore();
     };
 
@@ -51,6 +56,9 @@ class Entity {
     };
 
     rotate(angle) {
+        if(this.img.src.includes("fire.png"))
+        {    console.log("chamou", angle)
+        }
         let center = this.center();
         this.translate(-center.x, -center.y);
         for (let i = 0; i < this.points.length; i++) {

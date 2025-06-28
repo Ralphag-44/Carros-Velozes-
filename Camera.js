@@ -20,7 +20,13 @@ class Camera
     }
     collide(obj) {
         let obj_center = obj.center();
-        
+        // return (
+        //     obj_center.x - obj.width / 2 >= this.x &&
+        //     obj_center.x + obj.width / 2 <= this.x + this.width &&
+        //     obj_center.y - obj.height / 2 >= this.y &&
+        //     obj_center.y + obj.height / 2 <= this.y + this.height
+        // );
+
         return !(
             this.x > obj_center.x +obj.width/2 ||
             this.x + this.width < obj_center.x - obj.width/2 ||
@@ -29,8 +35,19 @@ class Camera
         );
     }
     draw()
-    {   for(let i = 0; i < entities.length; i++)
-        {   
+    {   
+        context.fillStyle = "green"
+        context.fillRect(this.canvasX, this.canvasY, this.width, this.height)
+        context.drawImage(world.pista, this.x, this.y, this.width, this.height, this.canvasX, this.canvasY, this.width, this.height) 
+        // eu to aq seu viado é que eu desativei o mic pra ficar numa posicao melhor na poltrona
+
+        
+
+        context.save();
+        context.translate(this.canvasX, this.canvasY);
+        
+        for(let i = 0; i < entities.length; i++)
+        {   //context.clip()
             // console.log(i, entities[i])
             if(this.collide(entities[i]))
             {   entities[i].draw(this.id);
@@ -38,8 +55,10 @@ class Camera
                     // console.log(entities[i])
             }
         }
+        context.restore();
         context.strokeStyle = "black";
-        context.strokeRect(this.canvasX, this.canvasY, this.width, this.height)
+        context.lineWidth = 3;
+        context.strokeRect(this.canvasX, this.canvasY, this.width-2, this.height-2);
     }
     update()
     {   let follow_center = this.follow.center();

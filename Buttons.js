@@ -45,18 +45,19 @@ class SwitchRoomButton extends Button
                 // canvas.width = 3621;
                 // canvas.height = 3027;
                 document.getElementById("style").textContent = "* { margin: 0px; overflow: hidden;}"
-                players = new Cars();
-                cameras = [];
-                for(let i = 0; (i < players.list.length); i++)
-                {   cameras.push(new Camera(i))
-                }
+                //players = new Cars();
+                //cameras = [];
+                // for(let i = 0; (i < players.list.length); i++)
+                // {   cameras.push(new Camera(i))
+                // }
             break;
             case "equipaments":
                 buttons = [
                     new SwitchButton(canvas.width*.025, canvas.height*.1, "", "", "PLAYER 1"),
                     new SwitchButton(canvas.width*.275, canvas.height*.1, "", "", "PLAYER 2"),
                     new SwitchButton(canvas.width*.525, canvas.height*.1, "", "", "PLAYER 3"),
-                    new SwitchButton(canvas.width*.775, canvas.height*.1, "", "", "PLAYER 4")
+                    new SwitchButton(canvas.width*.775, canvas.height*.1, "", "", "PLAYER 4"),
+                    new SwitchRoomButton(canvas.width*.4, canvas.height*.83, "", "", "VOLTAR", "menu")
                 ];
             break;
             case "configurations":
@@ -199,17 +200,15 @@ class SwitchControlButton extends Button
     }
 }
 class SetButton extends Button
-{   constructor(x, y, width, height, text, type)
-    {   super(x, y, width, height, text);
-        this.type = type;
+{   constructor(x, y, width, height)
+    {   super(x, y, width, height, "");
     }
     clicked()
-    {   if(this.type == 1)
-        {   
-        }
-        else
-        {   
-        }
+    {   
+    }
+    draw()
+    {   context.fillStyle = CarOptions == 0 ? "rgba(0, 0, 0, .5)" : "rgba(0, 0, 0, 0)";
+        context.fillRect(this.x, this.y, this.width, this.height);
     }
 }
 class SwitchButton extends Button
@@ -219,8 +218,13 @@ class SwitchButton extends Button
     clicked()
     {   switching = !switching;
         if(switching)
-        {   buttons.push(
-                new SetButton()
+        {   for(let i = 0; (i < buttons.length-1); i++)
+            {   if(buttons[i].text == this.text)
+                    CarOptions = i;
+            }
+            buttons.push(
+                new SetButton(this.x, this.y+125, this.width, this.width+50),
+                new SwitchButton(this.x, this.y + this.width + 200, "", 60, "PRONTO")
             );
         }
         else

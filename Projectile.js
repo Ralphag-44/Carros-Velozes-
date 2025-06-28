@@ -14,23 +14,32 @@ class Projectiles {
                     if (this.list[i].collision(players.list[j].points)) {
                         players.list[j].life -= this.list[i].damage;
                         hit = true;
-                        break;
                     } else {
                         for (let k = 0; k < players.list[j].weapons.length; k++) {
+                            // console.log(players.list[j])
                             if (this.list[i].collision(players.list[j].weapons[k].points)) {
                                 players.list[j].weapons[k].life -= this.list[i].damage;
                                 hit = true;
-                                break;
                             }
+                            if (hit) break;
                         }
                     }
-                    if (hit) break;
                 }
+                if (hit) break;
             }
 
             if (hit) {
-                console.log(this.list[i])
-                entities.splice(entities.indexOf(this.list[i]), 1)
+                console.log(this.list);
+                for(let i2 = 0; (i2 < entities.length); i2++)
+                {   let center = entities[i2].center();
+                    let bCenter = this.list[i].center();
+                    console.log(center.x , bCenter.x, center.y , bCenter.y, entities[i2], entities[i])
+                    if(center.x == bCenter.x && center.y == bCenter.y)
+                    {   entities.splice(i2, 1);
+                        i2 = entities.length;
+                        console.log("entrou porra") //funcionou!
+                    }
+                }
                 this.list.splice(i, 1);
                 i--;
             }
@@ -114,8 +123,8 @@ class RifleBullet extends Projectile {
     draw(id) {
         if (cameras[id].collide(this)) {
             context.beginPath();
-            context.moveTo(this.points[0].x, this.points[0].y);
-            context.lineTo(this.points[1].x, this.points[1].y);
+            context.moveTo(this.points[0].x - cameras[id].x, this.points[0].y - cameras[id].y);
+            context.lineTo(this.points[1].x - cameras[id].x, this.points[1].y - cameras[id].y);
             context.lineWidth = this.width;
             context.strokeStyle = "#bf930d";
             context.stroke();
