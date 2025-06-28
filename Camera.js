@@ -17,6 +17,7 @@ class Camera
             this.canvasX = this.width*follow;
         }
         this.id = follow;
+        this.hud = new Hud(follow);
     }
     collide(obj) {
         let obj_center = obj.center();
@@ -55,11 +56,12 @@ class Camera
                     // console.log(entities[i])
             }
         }
+        this.hud.draw();
         context.restore();
         context.strokeStyle = "black";
         context.lineWidth = 3;
         context.strokeRect(this.canvasX, this.canvasY, this.width-2, this.height-2);
-    }
+    } 
     update()
     {   let follow_center = this.follow.center();
         this.x = (follow_center.x + this.follow.width / 2)  - this.width / 2;

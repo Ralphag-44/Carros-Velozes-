@@ -28,8 +28,6 @@
         canvas.width = innerWidth;
         canvas.height = innerHeight;
         let context = canvas.getContext("2d");
-        context.fillStyle = 'gray'
-        context.fillRect(0, 0, canvas.width, canvas.height);
         let keys = [];
         let carsKeys = 
         [   {left: 65, right: 68, up: 87, down: 83, frontShoot: 81, backShoot: 69}, 
@@ -37,18 +35,19 @@
             {left: 74, right: 76, up: 73, down: 75, frontShoot: 85, backShoot: 79}, 
             {left: 37, right: 39, up: 38, down: 40, frontShoot: 17, backShoot: 16}, 
         ];
-        let sounds = new Sounds();
         let FPS = 30;
         let timer = setInterval(localStorage.room == "loop" ? loop : menu, 1000 / FPS);
-        //let players;
-        // let cameras;
+        let players;
+        let cameras;
+        let entities;
+        let totalLaps = 2;
         
-        let cameras = [];
-        let players = new Cars();
-        let entities = players.list.concat([])
-        for(let i = 0; (i < players.list.length); i++)
-        {   cameras.push(new Camera(i))
-        }
+        // let cameras = [];
+        // let players = new Cars([0, 0]);
+        // let entities = players.list.concat([])
+        // for(let i = 0; (i < players.list.length); i++)
+        // {   cameras.push(new Camera(i))
+        // }
         
         let world = {pista: new Image(), width: 7242, height: 6054}
         world.pista.src = "imgs/backgrounds/pista_grande.png";
@@ -68,10 +67,12 @@
             new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.06, "", "", "EQUIPAMENTOS", "equipaments"), 
             new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.25, "", "", "CONFIGURAÇÕES", "configurations")
         ];
+        let sounds = new Sounds();
         let MenuOptions = 0;
         let CarOptions = -1;
         let buttonsCanSwitch = 0;
         let buttonsSwitchLimit = 4;
+        let sound = .1;
         let mouse = 
         {   x: 0,
             y: 0,
@@ -82,9 +83,7 @@
                 && (this.y >= obj.y && this.y <= obj.y+obj.height);
             }   
         }     
-        //variavel temporaria de som para fazer o sound button
-        let sound = .5;
-        //variavel temporaria do set de carros para fazer o set temporário
+
         let carsSet = [0, 1, 2, 3];
         let switching = false;
 
