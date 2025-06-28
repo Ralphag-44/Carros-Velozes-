@@ -1,49 +1,467 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cópia do Death Rally so que ruim</title>
 </head>
+
 <body>
-    <canvas id="canva"></canvas>
+    <style id="style">
+        * {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <canvas id="canvas"></canvas>
     <script src="Entity.js"></script>
+    <script src="Sounds.js"></script>
+    <script src="Projectile.js"></script>
+    <script src="Guns.js"></script>
     <script src="Car.js"></script>
+    <script src="Particles.js"></script>
+    <script src="Cars.js"></script>
     <script src="Hud.js"></script>
+    <script src="Camera.js"></script>
+    <script src="PowerUps.js"></script>
+    <script src="Obst.js"></script>
+    <script src="Buttons.js"></script>
     <script>
-        let canvas = document.getElementById("canva");
-        canva.width = innerWidth;
-        canva.height = innerHeight;
+        let canvas = document.getElementById("canvas");
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
         let context = canvas.getContext("2d");
         let keys = [];
+        let carsKeys = 
+        [   {left: 65, right: 68, up: 87, down: 83, frontShoot: 81, backShoot: 69}, 
+            {left: 70, right: 72, up: 84, down: 71, frontShoot: 82, backShoot: 89}, 
+            {left: 74, right: 76, up: 73, down: 75, frontShoot: 85, backShoot: 79}, 
+            {left: 37, right: 39, up: 38, down: 40, frontShoot: 17, backShoot: 16}, 
+        ];
         let FPS = 30;
-        let timer = setInterval(menu, 1000/FPS);
-
+        let timer = setInterval(localStorage.room == "loop" ? loop : menu, 1000 / FPS);
+        let players;
+        let cameras;
+        let entities = [];
+        let effects = new Particles()
+        let totalLaps = 2;
+        let debug = false;
+        
+        // let cameras = [];
+        // let players = new Cars([0, 0]);
+        // let entities = players.list.concat([])
+        // for(let i = 0; (i < players.list.length); i++)
+        // {   cameras.push(new Camera(i))
+        // }
+        
+        let world = {pista: new Image(), width: 7242, height: 6054}
+        world.pista.src = "imgs/backgrounds/pista_grande.png";
+        world.pista.onload = () => {};
+		const menu_background = new Image();
+		menu_background.src = "imgs/backgrounds/bg.png";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        let pista = [];
         //so um array temporario pra pegar a posição dos pontos de colisão da pista
-        // let pontosPista = [];
-
-        function menu()
-        {   
+        //pontosPista.map((v) => "new Point("+v.x+", "+v.y+")").join(",")
+        let playersQuantity = 2;
+        let pontosPista = [new Point(967, 315),new Point(843, 320),new Point(727, 418),new Point(420, 726),new Point(402, 772),new Point(398, 1306),new Point(383, 1320),new Point(368, 1320),new Point(354, 1306),new Point(354, 266),new Point(995, 266),new Point(1019, 291),new Point(1021, 1387),new Point(1034, 1422),new Point(1059, 1457),new Point(1091, 1488),new Point(1128, 1507),new Point(1203, 1513),new Point(1459, 1513),new Point(1459, 1504),new Point(2510, 1504),new Point(2510, 1591),new Point(2307, 1592),new Point(2265, 1613),new Point(2216, 1663),new Point(2196, 1701),new Point(2190, 1709),new Point(2188, 1724),new Point(2188, 1730),new Point(2188, 2620),new Point(2185, 2637),new Point(2176, 2642),new Point(2155, 2647),new Point(1879, 2647),new Point(1859, 2627),new Point(1876, 2610),new Point(2187, 2610)];
+        let buttons = [
+            new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2-canvas.height*.3, "", "", "JOGAR", loop), 
+            new PlayersButton(innerWidth - innerWidth*.25, innerHeight/2-canvas.height*.12, "", ""), 
+            new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.06, "", "", "EQUIPAMENTOS", "equipaments"), 
+            new SwitchRoomButton(innerWidth - innerWidth*.25, innerHeight/2+canvas.height*.25, "", "", "CONFIGURAÇÕES", "configurations")
+        ];
+        let sounds = new Sounds();
+        let MenuOptions = 0;
+        let CarOptions = -1;
+        let buttonsCanSwitch = 0;
+        let buttonsSwitchLimit = 4;
+        let sound = .1;
+        let mouse = 
+        {   x: 0,
+            y: 0,
+            click: false,
+            colliding: false,
+            collide(obj)
+            {   return (this.x >= obj.x && this.x <= obj.x+obj.width) 
+                && (this.y >= obj.y && this.y <= obj.y+obj.height);
+            }   
         }
-        function loop()
-        {   
+          
+
+        let carsSet = [0, 1, 2, 3];
+        let switching = false;
+
+
+        function atualizePosition()
+        {   if(switching)
+            {   if(buttons.length == 7)
+                {   if(buttonsCanSwitch == buttonsSwitchLimit)
+                    {   if(keys[39])
+                        {   CarOptions = (CarOptions + 1)%4;
+                            carsSet[MenuOptions] = CarOptions;
+                            buttonsCanSwitch = 0;
+                        }
+                        else
+                        {   if(keys[37])
+                            {   CarOptions = (CarOptions + 3)%4;
+                                carsSet[MenuOptions] = CarOptions;
+                                buttonsCanSwitch = 0;
+                            }
+                        }
+                        if(keys[38] || keys[40])
+                        {   MenuOptions = MenuOptions == buttons[5].id ? 6 : buttons[5].id;
+                            buttonsCanSwitch = 0;
+                        }
+                        if(MenuOptions == 6 && keys[32])
+                        {   MenuOptions = buttons[5].id;
+                            buttons[MenuOptions].clicked();
+                            buttonsCanSwitch = 0;
+                        }
+                    }
+                    if(mouse.colliding)
+                    {   if(mouse.click && buttonsCanSwitch == buttonsSwitchLimit)
+                        {   if(MenuOptions == 6)
+                            {   buttons[MenuOptions].clicked();
+                                MenuOptions = 0;
+                                //buttonsCanSwitch = 0;
+                                mouse.click = false;
+                            }
+                            if(MenuOptions == buttons[5]?.id)
+                            {   CarOptions = (CarOptions + 1)%4;
+                                carsSet[MenuOptions] = CarOptions;
+                                buttonsCanSwitch = 0;
+                            }
+                        }
+                    }
+                }
+                else 
+                {   if(buttons.length >= 24 && keys.includes(true))
+                    {   buttons[MenuOptions].text = "";
+                        if(buttonsCanSwitch == buttonsSwitchLimit)
+                        {   let playerPos = Math.trunc((MenuOptions)/6);
+                            let newKey = keys.indexOf(true);
+                            let keysT = ["up", "down", "left", "right", "frontShoot", "backShoot"];
+                            for(let i = 0; (i < carsKeys.length); i++)
+                            {   for(let i2 = 0; (i2 < keysT.length); i2++)
+                                {   if(carsKeys[i][keysT[i2]] == newKey)
+                                    {   carsKeys[i][keysT[i2]] = "";
+                                    }
+                                }
+                            }
+                            switch(MenuOptions%6)
+                            {   case 0: 
+                                    carsKeys[playerPos].up = newKey;
+                                break;
+                                case 1: 
+                                    carsKeys[playerPos].down = newKey;
+                                break;
+                                case 2: 
+                                    carsKeys[playerPos].left = newKey;
+                                break;
+                                case 3: 
+                                    carsKeys[playerPos].right = newKey;
+                                break;
+                                case 4: 
+                                    carsKeys[playerPos].frontShoot = newKey;
+                                break;
+                                case 5: 
+                                    carsKeys[playerPos].backShoot = newKey;
+                                break;
+                            }
+                            for(let i = 0; (i < buttons.length-1); i++)
+                            {   let local = Math.trunc(i/6);
+                                switch(i%6)
+                                {   case 0:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                                    break;
+                                    case 1:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                                    break;
+                                    case 2:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                                    break;
+                                    case 3:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                                    break;
+                                    case 4:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                                    break;
+                                    case 5:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                                    break;
+                                }
+                            }
+                            buttonsCanSwitch = 0;
+                            switching = false;
+                        }
+                    }
+                }
+            }
+            else
+            {   if(buttonsCanSwitch == buttonsSwitchLimit)
+                {   if(buttons.length == 5)
+                    {   if(MenuOptions != 4)
+                        {   if(keys[39])
+                            {   MenuOptions = (MenuOptions+1)%4
+                                buttonsCanSwitch = 0; 
+                            }
+                            else
+                            {   if(keys[37])
+                                {   MenuOptions = (MenuOptions+3)%4
+                                    buttonsCanSwitch = 0; 
+                                }
+                            }
+                        }
+                        if(keys[38] || keys[40])
+                        {   MenuOptions = (!(Math.trunc(MenuOptions/4)))*4
+                            buttonsCanSwitch = 0; 
+                        }
+                    }
+                    else
+                    { if(buttons.length >= 24)
+                        {   if(MenuOptions == buttons.length-1 && (keys[39]+keys[40]+keys[37]+keys[38]))
+                            {   MenuOptions = 0;
+                                buttonsCanSwitch = 0;   
+                            }
+                            else if (MenuOptions == 0 && (keys[37]+keys[38]))
+                            {   MenuOptions = buttons.length-1;
+                                buttonsCanSwitch = 0;   
+                            }
+                            else
+                            {   if(keys[37])
+                                {   MenuOptions = (MenuOptions-6+(buttons.length-1))%(buttons.length-1);
+                                    buttonsCanSwitch = 0;
+                                }
+                                else
+                                {   if(keys[39])
+                                    {   MenuOptions = (MenuOptions+6)%(buttons.length-1);
+                                        buttonsCanSwitch = 0;
+                                    }
+                                }
+                                if(keys[38])
+                                {   if(Math.trunc(MenuOptions/6)*6==MenuOptions)
+                                    {   MenuOptions = Math.ceil((MenuOptions+1)/6)*6-1;
+                                    }
+                                    else
+                                    {   MenuOptions = (MenuOptions-1+(buttons.length-1))%(buttons.length-1);
+                                    }
+                                    buttonsCanSwitch = 0;
+                                }
+                                else
+                                {   if(keys[40])
+                                    {   if(Math.ceil(MenuOptions/6)*6-1==MenuOptions)
+                                        {   MenuOptions = Math.trunc(MenuOptions/6)*6;
+                                        }
+                                        else
+                                        {   MenuOptions = (MenuOptions+1)%(buttons.length-1);
+                                        }
+                                        buttonsCanSwitch = 0;
+                                    }
+                                }   
+                            }
+                        }
+                        else
+                        {   if(keys[38])
+                            {   MenuOptions = (MenuOptions-1+buttons.length)%buttons.length;
+                                buttonsCanSwitch = 0;
+                            }
+                            if(keys[40])
+                            {   MenuOptions = (MenuOptions+1)%buttons.length;
+                                buttonsCanSwitch = 0;
+                            }
+                            if(keys[39])
+                            {   if(buttons[MenuOptions].text == playersQuantity + " PLAYERS" || buttons[MenuOptions].text == "SOM")
+                                {   buttons[MenuOptions].clicked(1);
+                                    buttonsCanSwitch = 0;
+                                }
+                            }
+                            if(keys[37])
+                            {   if(buttons[MenuOptions].text == playersQuantity + " PLAYERS" || buttons[MenuOptions].text == "SOM")
+                                {   buttons[MenuOptions].clicked(-1);
+                                    buttonsCanSwitch = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+                if((keys[32] && buttonsCanSwitch == buttonsSwitchLimit) || (mouse.click && mouse.colliding))
+                {   let parameter;
+                    if(buttons[MenuOptions].text == "SOM")
+                    {   parameter = 0;
+                    }
+                    if((mouse.click && mouse.colliding) && buttons[MenuOptions].text == playersQuantity + " PLAYERS")
+                    {   parameter = 1;
+                    }
+                    buttons[MenuOptions].clicked(parameter);
+                    buttonsCanSwitch = 0;
+                }
+            }
+            
+            buttonsCanSwitch += buttonsCanSwitch < buttonsSwitchLimit;
+            mouse.click = false;
+        }
+        function menu()
+        {   context.drawImage(menu_background, 0, 0, canvas.width, canvas.height);
+            if(buttons[0].text == "PLAYER 1")
+            {   let carsImgs = [new Image(), new Image(), new Image(), new Image()];
+                let weapons1Imgs = [new Image(), new Image(), new Image(), new Image()];
+                let weapons2Imgs = [new Image(), new Image(), new Image(), new Image()];
+                
+                for(let i = 0; (i < carsImgs.length); i++)
+                {   
+                    switch (carsSet[i])        
+                    {   case 0:
+                            carsImgs[i].src = "imgs/cars/viper.png";
+                            weapons1Imgs[i].src = "imgs/guns/machinegun.png";
+                            weapons2Imgs[i].src = "imgs/guns/flamethrower.png";
+                        break;
+                        case 1:
+                            carsImgs[i].src = "imgs/cars/challenger.png";
+                            weapons1Imgs[i].src = "imgs/guns/shotgun.png";
+                            weapons2Imgs[i].src = "imgs/guns/serraparada.png";
+                        break;
+                        case 2:
+                            carsImgs[i].src = "imgs/cars/ranger.png";
+                            weapons1Imgs[i].src = "imgs/guns/rifle.png";
+                            weapons2Imgs[i].src = "imgs/guns/pem.png";
+                        break;
+                        case 3:
+                            carsImgs[i].src = "imgs/cars/vanderlei.png";
+                            weapons1Imgs[i].src = "imgs/guns/rocket.png";
+                            weapons2Imgs[i].src = "imgs/guns/minelauncher.png";
+                        break;
+                    }
+                }
+                
+                context.fillStyle = "white";
+                for(let i = 0; (i < carsImgs.length); i++)
+                {   context.fillRect(buttons[i].x, buttons[i].y+125, buttons[i].width, buttons[i].width+50)
+                    context.save();
+                    context.translate(buttons[i].x+buttons[i].width/2, buttons[i].y+buttons[i].height/2)
+                    context.rotate(Math.PI*1.5)
+                    context.drawImage(carsImgs[i], -buttons[i].width-100, -buttons[i].height/2, buttons[i].width, buttons[i].height);
+                    context.drawImage(weapons1Imgs[i], -buttons[i].width-50, -buttons[i].height/2-75, buttons[i].width/1.5, buttons[i].height/1.5);
+                    context.drawImage(weapons2Imgs[i], -buttons[i].width-50, -buttons[i].height/2+110, buttons[i].width/1.5, buttons[i].height/1.5);
+                    context.restore();
+                }
+            }
+            else
+            {   if(buttons.length < 24)
+                {   context.fillStyle = "white";
+                    context.font = "100px Times new Roman"
+                    context.fillText("DEATH RALLY", 400, 160);
+                    context.fillText("(só que ruim)", 400, 260);                
+                }
+            }
+            
+            atualizeButtons();
+            atualizePosition();
+            
+            if(buttons.length >= 24)
+            {   context.fillStyle = "white";
+                context.font = (canvas.width+canvas.height)/105+"px Times New Roman";
+                
+                context.fillText("CIMA:", canvas.width*.32, canvas.height*.175);
+                context.fillText("BAIXO:", canvas.width*.32, canvas.height*.325);
+                context.fillText("ESQUERDA:", canvas.width*.32, canvas.height*.475);
+                context.fillText("DIREITA:", canvas.width*.32, canvas.height*.625);
+                context.fillText("ARMA FRONTAL:", canvas.width*.32, canvas.height*.775);
+                context.fillText("ARMA TRASEIRA:", canvas.width*.32, canvas.height*.925);
+                context.textAlign = "left";
+                context.fillText("PLAYER 1", canvas.width*.415, canvas.height*.075);
+                context.fillText("PLAYER 2", canvas.width*.565, canvas.height*.075);
+                context.fillText("PLAYER 3", canvas.width*.715, canvas.height*.075);
+                context.fillText("PLAYER 4", canvas.width*.865, canvas.height*.075);
+            }
+        }
+        function atualizeButtons()
+        {   for(let i = 0; (i < buttons.length); i++)
+            {   buttons[i].draw()    
+                if(i == MenuOptions)   
+                {   buttons[i].selected = true;
+                }
+                else
+                {  buttons[i].selected = false; 
+                }
+            }
+            
+        }
+        function loop() {
+            // context.fillStyle = 'darkgreen';
+            // context.fillRect(0, 0, canvas.width, canvas.height);
+            // context.drawImage(world.pista, 0, 0, world.width, world.height);
+            // for(let i = 0; (i < cameras.length); i++)
+            // {   cameras[i].update();
+            //     cameras[i].draw();
+            // }
+            players.update();
+
+            effects.update();
+
+            for(let i =0; i < entities.length; i++)
+            { 
+               if(entities[i] instanceof PowerUp || entities[i] instanceof Obs)
+               {
+                entities[i].update()
+               }
+            }
+
+            for(let i = 0; (i < cameras.length); i++)
+            {   cameras[i].update();
+                cameras[i].draw();
+            }
         }
 
         document.addEventListener("keydown", keyD);
         document.addEventListener("keyup", keyU);
+        document.addEventListener("mousemove", mouseM);
         function keyD(event)
         {   keys[event.keyCode] = true;
+          //  console.log(event.keyCode);
         }
         function keyU(event)
         {   keys[event.keyCode] = false;
         }
-        
-        // document.addEventListener("click", putPoint);
-        // function putPoint(event)
-        // {   pontosPista.push(new Point(event.clientX, event.clientY))
-        // }
+        function mouseM(event)
+        {   mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            for(let i = 0; (i < buttons.length); i++)
+            {   if(!switching)
+                {   if(mouse.collide(buttons[i]))
+                    {   MenuOptions = i;
+                        mouse.colliding = true;
+                        i = buttons.length;
+                    }   
+                    else
+                    {   mouse.colliding = false;
+                    }
+                }
+                else
+                {   if(buttons.length == 7)
+                    {   if(mouse.collide(buttons[i]) && (i == buttons[5].id || i == 6 || i == 5))
+                        {   MenuOptions = i != 5 ? i : buttons[5].id;
+                            mouse.colliding = true;
+                            i = buttons.length;
+                        }   
+                        else
+                        {   mouse.colliding = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        document.addEventListener("click", clicked);
+        function clicked()
+        {   mouse.click = true;
+        }
+
     </script>
 </body>
+
 </html>
 
 <!-- 
@@ -93,4 +511,23 @@ Slow motion quando morrer / rewind
     Caixote
     
 
+    
 -->
+
+
+// let PontosPista = [
+        //     [   new Point(3718, 3614),new Point(3740, 3664),new Point(3794, 3662),new Point(3796, 3600),new Point(3756, 3588),new Point(3720, 3614)
+        //     ],
+        //     [   new Point(1934, 630), new Point(1686, 640), new Point(1454, 836), new Point(840, 1452), new Point(804, 1544), new Point(796, 2612), new Point(766, 2640), new Point(736, 2640), new Point(708, 2612), new Point(708, 532), new Point(1990, 532), new Point(2038, 582), new Point(2042, 2774), new Point(2068, 2844), new Point(2118, 2914), new Point(2182, 2976), new Point(2256, 3014), new Point(2406, 3026), new Point(2918, 3026), new Point(2918, 3008), new Point(5020, 3008), new Point(5020, 3182), new Point(4614, 3184), new Point(4530, 3226), new Point(4432, 3326), new Point(4392, 3402), new Point(4380, 3418), new Point(4376, 3448), new Point(4376, 3460), new Point(4376, 5240), new Point(4370, 5274), new Point(4352, 5284), new Point(4310, 5294), new Point(3758, 5294), new Point(3718, 5254), new Point(3752, 5220), new Point(4374, 5220), new Point(4955, 5228), new Point(4957, 5423), new Point(4972, 5508), new Point(5028, 5590), new Point(5093, 5653), new Point(5165, 5692), new Point(5258, 5697), new Point(5337, 5698), new Point(6323, 5700), new Point(6424, 5670), new Point(6508, 5597), new Point(6571, 5503), new Point(6608, 5412), new Point(6604, 5347), new Point(6611, 5283), new Point(6606, 5213), new Point(6598, 5135), new Point(6586, 5047), new Point(6559, 4963), new Point(6524, 4923), new Point(6406, 4832), new Point(6334, 4816), new Point(6268, 4810), new Point(6199, 4811), new Point(5358, 4809), new Point(5351, 4558), new Point(5316, 4385), new Point(5235, 4312), new Point(5138, 4258), new Point(5033, 4238), new Point(4951, 4238), new Point(4284, 4237), new Point(4222, 4212), new Point(4204, 4140), new Point(4204, 4063), new Point(5079, 4065), new Point(5179, 4092), new Point(5716, 4622), new Point(5827, 4642), new Point(6327, 4643), new Point(6430, 4613), new Point(6515, 4537), new Point(6587, 4450), new Point(6605, 4347), new Point(6605, 3803), new Point(6587, 3712), new Point(6557, 3625), new Point(6150, 3223), new Point(6088, 3197), new Point(5857, 3183), new Point(5858, 3012), new Point(6308, 3007), new Point(6457, 2937), new Point(6525, 2857), new Point(6558, 2763), new Point(6562, 1052), new Point(6510, 952), new Point(6430, 857), new Point(6345, 817), new Point(6298, 795), new Point(5815, 810), new Point(5715, 880), new Point(5219, 1372), new Point(5213, 1372), new Point(4693, 853), new Point(4635, 822), new Point(4569, 805), new Point(4121, 798), new Point(4021, 853), new Point(3946, 915), new Point(3896, 990), new Point(3869, 1085), new Point(3869, 1168), new Point(3869, 2245), new Point(3931, 2392), new Point(3992, 2462), new Point(4058, 2504), new Point(4124, 2525), new Point(4216, 2529), new Point(4606, 2531), new Point(4664, 2500), new Point(4755, 2430), new Point(5213, 1957), new Point(5227, 1960), new Point(5646, 2378), new Point(5758, 2493), new Point(5870, 2527), new Point(6803, 2527), new Point(6935, 2443), new Point(7010, 2366), new Point(7038, 2273), new Point(7045, 2234), new Point(7045, 1726), new Point(7018, 1649), new Point(6941, 1558), new Point(6878, 1505), new Point(6802, 1474), new Point(6745, 1465), new Point(3719, 1465), new Point(3624, 1474), new Point(3545, 1511), new Point(3479, 1569), new Point(3441, 1602), new Point(3403, 1670), new Point(3390, 1721), new Point(3387, 1763), new Point(3392, 2221), new Point(2425, 2221), new Point(2426, 2162), new Point(1948, 2166), new Point(1901, 2154), new Point(1867, 2119), new Point(1858, 2086), new Point(1851, 2079), new Point(1851, 1816), new Point(1881, 1791), new Point(1919, 1779), new Point(2453, 1781), new Point(2710, 1764), new Point(2841, 1663), new Point(2966, 1530), new Point(3135, 1369), new Point(3192, 1278), new Point(3193, 870), new Point(3187, 830), new Point(3171, 801), new Point(3065, 675), new Point(3007, 635), new Point(1934, 630)
+        //     ],
+        //     [   new Point(1934, 1010), new Point(1850, 1028), new Point(1822, 1044), new Point(1222, 1640), new Point(1184, 1726), new Point(1180, 2782), new Point(1174, 2820), new Point(1146, 2864), new Point(1022, 2990), new Point(936, 3018), new Point(882, 3026), new Point(562, 3028), new Point(482, 2996), new Point(432, 2950), new Point(348, 2850), new Point(322, 2814), new Point(318, 506), new Point(422, 382), new Point(536, 272), new Point(698, 174), new Point(782, 152), new Point(2168, 150), new Point(2240, 158), new Point(2400, 308), new Point(2424, 376), new Point(2434, 412), new Point(2434, 2580), new Point(2492, 2644), new Point(6132, 2612), new Point(6172, 2576), new Point(6172, 1234), new Point(6118, 1186), new Point(6052, 1186), new Point(5962, 1212), new Point(5918, 1242), new Point(5858, 1304), new Point(5828, 1334), new Point(5694, 1462), new Point(5706, 1860), new Point(5962, 2114), new Point(6071, 2141), new Point(6588, 2144), new Point(6643, 2096), new Point(6650, 1917), new Point(6613, 1874), new Point(6575, 1857), new Point(6343, 1855), new Point(5716, 1857), new Point(4712, 1860), new Point(3827, 1857), new Point(3803, 1880), new Point(3780, 1904), new Point(3778, 1970), new Point(3779, 2540), new Point(3768, 2552), new Point(1732, 2550), new Point(1658, 2530), new Point(1585, 2472), new Point(1504, 2390), new Point(1482, 2330), new Point(1472, 2285), new Point(1470, 1766), new Point(1476, 1606), new Point(1507, 1556), new Point(1554, 1502), new Point(1612, 1447), new Point(1647, 1423), new Point(1692, 1396), new Point(1765, 1390), new Point(1858, 1389), new Point(2017, 1390), new Point(2484, 1389), new Point(2587, 1343), new Point(2814, 1111), new Point(2806, 1051), new Point(2776, 1027), new Point(2735, 1011), new Point(1934, 1010)
+        //     ],
+        //     [   new Point(1714, 626), new Point(2950, 626), new Point(3078, 698), new Point(3170, 804), new Point(3192, 902), new Point(3192, 1246), new Point(3178, 1298), new Point(3088, 1394), new Point(2944, 1540), new Point(2788, 1706), new Point(2740, 1746), new Point(2680, 1766), new Point(2640, 1772), new Point(1896, 1778), new Point(1862, 1820), new Point(1846, 1912), new Point(1852, 2080), new Point(1868, 2124), new Point(1890, 2144), new Point(1940, 2162), new Point(2004, 2166), new Point(2016, 2158), new Point(2422, 2160), new Point(2422, 2220), new Point(3386, 2226), new Point(3386, 1732), new Point(3416, 1642), new Point(3466, 1580), new Point(3558, 1500), new Point(3650, 1466), new Point(6784, 1466), new Point(6846, 1484), new Point(6964, 1576), new Point(7030, 1676), new Point(7040, 1720), new Point(7042, 2266), new Point(7024, 2314), new Point(7012, 2350), new Point(6988, 2390), new Point(6932, 2442), new Point(6896, 2480), new Point(6814, 2516), new Point(6794, 2528), new Point(5868, 2530), new Point(5808, 2510), new Point(5760, 2492), new Point(5744, 2480), new Point(5220, 1952), new Point(5208, 1952), new Point(5002, 2164), new Point(4980, 2182), new Point(4946, 2210), new Point(4922, 2248), new Point(4858, 2312), new Point(4768, 2404), new Point(4676, 2488), new Point(4644, 2510), new Point(4594, 2522), new Point(4188, 2530), new Point(4044, 2498), new Point(3960, 2442), new Point(3900, 2364), new Point(3872, 2282), new Point(3864, 2244), new Point(3868, 1080), new Point(3912, 956), new Point(3978, 882), new Point(4064, 816), new Point(4116, 798), new Point(4576, 798), new Point(4668, 832), new Point(4688, 848), new Point(5210, 1372), new Point(5802, 804), new Point(6298, 804), new Point(6372, 826), new Point(6468, 896), new Point(6526, 970), new Point(6554, 1036), new Point(6560, 1048), new Point(6558, 2756), new Point(6530, 2836), new Point(6502, 2886), new Point(6442, 2932), new Point(6400, 2974), new Point(6346, 2992), new Point(6306, 3008), new Point(5860, 3010), new Point(5860, 3192), new Point(6060, 3196), new Point(6140, 3232), new Point(6194, 3270), new Point(6272, 3344), new Point(6564, 3636), new Point(6584, 3720), new Point(6598, 3850), new Point(6600, 3886), new Point(6598, 4386), new Point(6564, 4464), new Point(6508, 4534), new Point(6422, 4612), new Point(6320, 4636), new Point(5802, 4634), new Point(5742, 4624), new Point(5672, 4580), new Point(5180, 4084), new Point(5082, 4058), new Point(4196, 4060), new Point(4196, 4176), new Point(4218, 4214), new Point(4264, 4238), new Point(5064, 4242), new Point(5142, 4264), new Point(5228, 4316), new Point(5310, 4390), new Point(5336, 4476), new Point(5350, 4644), new Point(5350, 4820), new Point(6344, 4822), new Point(6414, 4840), new Point(6468, 4880), new Point(6556, 4974), new Point(6584, 5056), new Point(6598, 5186), new Point(6598, 5434), new Point(6568, 5512), new Point(6502, 5594), new Point(6440, 5652), new Point(6390, 5678), new Point(6312, 5692), new Point(5240, 5692), new Point(5158, 5676), new Point(5094, 5638), new Point(5032, 5576), new Point(4972, 5498), new Point(4952, 5442), new Point(4960, 5212), new Point(3746, 5212), new Point(3716, 5248), new Point(3718, 5274), new Point(3746, 5300), new Point(4322, 5300), new Point(4368, 5272), new Point(4382, 5232), new Point(4384, 5212), new Point(4384, 3413), new Point(4423, 3342), new Point(4488, 3280), new Point(4548, 3213), new Point(4633, 3180), new Point(5024, 3183), new Point(5028, 3005), new Point(2927, 3018), new Point(2914, 3033), new Point(2316, 3027), new Point(2261, 3013), new Point(2189, 2980), new Point(2129, 2913), new Point(2072, 2838), new Point(2050, 2777), new Point(2041, 2753), new Point(2041, 593), new Point(1986, 536), new Point(1919, 531), new Point(1016, 531), new Point(711, 531), new Point(711, 2612), new Point(735, 2642), new Point(773, 2646), new Point(789, 2619), new Point(799, 2567), new Point(800, 1548), new Point(835, 1457), new Point(908, 1387), new Point(1099, 1193), new Point(1405, 889), new Point(1568, 713), new Point(1654, 652), new Point(1714, 626)
+        //     ],
+        //     [   new Point(4772, 3585), new Point(4772, 5444), new Point(4749, 5512), new Point(4689, 5598), new Point(4602, 5675), new Point(4496, 5702), new Point(3612, 5698), new Point(3520, 5687), new Point(3450, 5647), new Point(3390, 5585), new Point(3338, 5505), new Point(3317, 5418), new Point(3315, 5333), new Point(3318, 5232), new Point(3310, 5138), new Point(3313, 5047), new Point(3365, 4945), new Point(3435, 4880), new Point(3517, 4828), new Point(3622, 4810), new Point(3705, 4812), new Point(4958, 4812), new Point(4965, 4732), new Point(4930, 4665), new Point(4845, 4645), new Point(4095, 4643), new Point(4003, 4632), new Point(3933, 4595), new Point(3873, 4525), new Point(3818, 4447), new Point(3800, 4350), new Point(3795, 4262), new Point(3798, 4065), new Point(3612, 4068), new Point(3515, 4055), new Point(3448, 4003), new Point(3367, 3920), new Point(3327, 3858), new Point(3318, 3770), new Point(3320, 3410), new Point(3363, 3313), new Point(3433, 3247), new Point(3508, 3195), new Point(3623, 3177), new Point(3882, 3180), new Point(3983, 3205), new Point(4087, 3258), new Point(4160, 3332), new Point(4187, 3415), new Point(4203, 3503), new Point(4212, 3592), new Point(4213, 3662), new Point(5220, 3663), new Point(5327, 3683), new Point(5430, 3742), new Point(5869, 4183), new Point(5962, 4235), new Point(6147, 4237), new Point(6185, 4213), new Point(6207, 4142), new Point(6199, 4052), new Point(6195, 3950), new Point(6179, 3860), new Point(6135, 3788), new Point(6022, 3683), new Point(5964, 3623), new Point(5872, 3595), new Point(5767, 3583), new Point(4772, 3587) 
+        //     ],
+        //     [   new Point(5364, 3188), new Point(5468, 3188), new Point(5468, 3005), new Point(5364, 3005), new Point(5364, 3188)
+        //     ],
+        //     [   new Point(5354, 5218), new Point(6184, 5222), new Point(6201, 5269), new Point(6184, 5292), new Point(5406, 5293), new Point(5370, 5259), new Point(5354, 5218)
+        //     ]
+        // ];
