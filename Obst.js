@@ -97,7 +97,7 @@ class Caixa extends Obs {
 }
 
 
-// === Como usar ===
-// adicione instâncias em `entities`, por exemplo:
+
+// exemplo
 //entities.push(new Poca(400, 300, 40));
 //entities.push(new Caixa(600, 500, 50));

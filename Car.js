@@ -486,7 +486,6 @@ class Car extends Entity {
 
    	}
 
-
 	super.draw(id);
     if(debug){super.draw_debug(id);}
 	        for (let i = 0; i < this.weapons.length; i++) {
