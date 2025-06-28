@@ -270,13 +270,13 @@ class Car extends Entity {
 	coli_aplic(data) {
 		this.hitbox = JSON.parse(JSON.stringify(this.points));
 		this.angle = this.back_up_angle;
-             for(let j = 0; j < this.weapons.length; j++)
-             {  
-                if(this.weapons[j].points.join("")==this.weapons[j].save.join("")){console.log("Erro")}
-                else{console.log(1)}
-                this.weapons[j].points = [...this.weapons[j].save];
+            //  for(let j = 0; j < this.weapons.length; j++)
+            //  {  
+            //     if(this.weapons[j].points.join("")==this.weapons[j].save.join("")){console.log("Erro")}
+            //     else{console.log(1)}
+            //     this.weapons[j].points = [...this.weapons[j].save];
 
-             }
+            //  }
 		let detectores = [{
 				inc: 1,
 				fim: 2,

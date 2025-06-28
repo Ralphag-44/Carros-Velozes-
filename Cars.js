@@ -6,10 +6,10 @@ class Cars {
             {   case 0:
                 {   this.list.push( new Viper(
                     [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
+                        new Point(3000, 2650+(100*i)),
+                        new Point(3100, 2650+(100*i)),
+                        new Point(3100, 2700+(100*i)),
+                        new Point(3000, 2700+(100*i)),
                     ], i
                     ));
                 }
@@ -17,10 +17,10 @@ class Cars {
                 case 1:
                 {   this.list.push( new Challenger(
                     [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
+                        new Point(3000, 2650+(100*i)),
+                        new Point(3100, 2650+(100*i)),
+                        new Point(3100, 2700+(100*i)),
+                        new Point(3000, 2700+(100*i)),
                     ], i
                     ));
                 }
@@ -28,10 +28,10 @@ class Cars {
                 case 2:
                 {   this.list.push( new Ranger(
                     [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
+                        new Point(3000, 2650+(100*i)),
+                        new Point(3100, 2650+(100*i)),
+                        new Point(3100, 2700+(100*i)),
+                        new Point(3000, 2700+(100*i)),
                     ], i
                     ));
                 }
@@ -39,50 +39,16 @@ class Cars {
                 case 3:
                 {   this.list.push( new Vanderlei(
                     [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
+                        new Point(3000, 2650+(100*i)),
+                        new Point(3100, 2650+(100*i)),
+                        new Point(3100, 2700+(100*i)),
+                        new Point(3000, 2700+(100*i)),
                     ], i
                     ));
                 }
                 break;
             }
         }
-        // this.list = [
-        //     new Ranger(
-        //         [
-        //             new Point(100, 100),
-        //             new Point(200, 100),
-        //             new Point(200, 150),
-        //             new Point(100, 150),
-        //         ], 0
-        //     ),
-        //     new Test(
-        //         [
-        //             new Point(500, 100),
-        //             new Point(600, 100),
-        //             new Point(600, 150),
-        //             new Point(500, 150),
-        //         ], 1
-        //     ),
-        //     new Vanderlei(
-        //         [
-        //             new Point(100, 500),
-        //             new Point(200, 500),
-        //             new Point(200, 550),
-        //             new Point(100, 550),
-        //         ], 2
-        //     ),
-        //     new Ranger(
-        //         [
-        //             new Point(100, 500),
-        //             new Point(200, 500),
-        //             new Point(200, 550),
-        //             new Point(100, 550),
-        //         ], 3
-        //     )
-        // ];
     };
 
     update() {

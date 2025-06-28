@@ -51,6 +51,7 @@ class SwitchRoomButton extends Button
                 for(let i = 0; (i < players.list.length); i++)
                 {   cameras.push(new Camera(i))
                 }
+                entities = entities.concat(checkpoints)   
             break;
             case "equipaments":
                 buttons = [

@@ -19,6 +19,7 @@
     <script src="Sounds.js"></script>
     <script src="Explosion.js"></script>
     <script src="Projectile.js"></script>
+    <script src="Track.js"></script>
     <script src="Guns.js"></script>
     <script src="Car.js"></script>
     <script src="Particles.js"></script>
@@ -51,6 +52,10 @@
         let effects = new Particles()
         let totalLaps = 2;
         let debug = false;
+        // let checkpoints = [new LapLine([new Point(3000, 2600), new Point(20, 20)], 1), 
+        // new LapLine([new Point(50, 50), new Point(1000, 1000)], 2)];
+        
+        
         
         // let cameras = [];
         // let players = new Cars([0, 0]);
@@ -418,6 +423,10 @@
             //     cameras[i].draw();
             // }
             explosions.update();
+
+            // for (let i = 0; i < checkpoints.length; i++) {
+            //     checkpoints[i].draw(this.id);
+            // }
 
             if(!time.replaying)
             {   players.update();
