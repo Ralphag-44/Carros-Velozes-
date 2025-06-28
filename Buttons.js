@@ -46,6 +46,7 @@ class SwitchRoomButton extends Button
                 players = new Cars(carsSet.slice(0, playersQuantity));
                 entities = players.list.concat([])
                 sounds = new Sounds();
+                time = new TimeController();
                 cameras = [];
                 for(let i = 0; (i < players.list.length); i++)
                 {   cameras.push(new Camera(i))

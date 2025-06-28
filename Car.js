@@ -1,52 +1,56 @@
 class Cars {
     constructor(create) {
         this.list = [];
-        for(let i = 0; (i < create.length); i++)
-        {   switch(create[i])
-            {   case 0:
-                {   this.list.push( new Viper(
-                    [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
-                    ], i
-                    ));
-                }
-                break;
+        for (let i = 0; (i < create.length); i++) {
+            switch (create[i]) {
+                case 0:
+                    {
+                        this.list.push(new Viper(
+                            [
+                                new Point(100, 100 + (100 * i)),
+                                new Point(200, 100 + (100 * i)),
+                                new Point(200, 150 + (100 * i)),
+                                new Point(100, 150 + (100 * i)),
+                            ], i
+                        ));
+                    }
+                    break;
                 case 1:
-                {   this.list.push( new Challenger(
-                    [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
-                    ], i
-                    ));
-                }
-                break;
+                    {
+                        this.list.push(new Challenger(
+                            [
+                                new Point(100, 100 + (100 * i)),
+                                new Point(200, 100 + (100 * i)),
+                                new Point(200, 150 + (100 * i)),
+                                new Point(100, 150 + (100 * i)),
+                            ], i
+                        ));
+                    }
+                    break;
                 case 2:
-                {   this.list.push( new Ranger(
-                    [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
-                    ], i
-                    ));
-                }
-                break;
+                    {
+                        this.list.push(new Ranger(
+                            [
+                                new Point(100, 100 + (100 * i)),
+                                new Point(200, 100 + (100 * i)),
+                                new Point(200, 150 + (100 * i)),
+                                new Point(100, 150 + (100 * i)),
+                            ], i
+                        ));
+                    }
+                    break;
                 case 3:
-                {   this.list.push( new Vanderlei(
-                    [
-                        new Point(100, 100+(100*i)),
-                        new Point(200, 100+(100*i)),
-                        new Point(200, 150+(100*i)),
-                        new Point(100, 150+(100*i)),
-                    ], i
-                    ));
-                }
-                break;
+                    {
+                        this.list.push(new Vanderlei(
+                            [
+                                new Point(100, 100 + (100 * i)),
+                                new Point(200, 100 + (100 * i)),
+                                new Point(200, 150 + (100 * i)),
+                                new Point(100, 150 + (100 * i)),
+                            ], i
+                        ));
+                    }
+                    break;
             }
         }
         // this.list = [
@@ -89,8 +93,20 @@ class Cars {
         for (let i = 0; i < this.list.length; i++) {
             this.list[i].update();
             if (this.list[i].life <= 0) {
+                let kabum = new Explosion(this.list[i].center().x - 75, this.list[i].center().y - 75, 150, 150)
+                explosions.list.push(kabum);
+                entities.push(kabum)
+                sounds.explosion();
+                for (let i2 = 0; (i2 < entities.length); i2++) {
+                    let center = entities[i2].center();
+                    let bCenter = this.list[i].center();
+                    if (center.x == bCenter.x && center.y == bCenter.y) {
+                        entities.splice(i2, 1);
+                        i2 = entities.length;
+                    }
+                }
                 this.list.splice(i, 1);
-                //new Explosion()
+                i--;
             }
         }
     };

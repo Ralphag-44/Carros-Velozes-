@@ -17,12 +17,14 @@
     <canvas id="canvas"></canvas>
     <script src="Entity.js"></script>
     <script src="Sounds.js"></script>
+    <script src="Explosion.js"></script>
     <script src="Projectile.js"></script>
     <script src="Guns.js"></script>
     <script src="Car.js"></script>
     <script src="Hud.js"></script>
     <script src="Camera.js"></script>
     <script src="Buttons.js"></script>
+    <script src="TimeController.js"></script>
     <script>
         let canvas = document.getElementById("canvas");
         canvas.width = innerWidth;
@@ -36,10 +38,12 @@
             {left: 37, right: 39, up: 38, down: 40, frontShoot: 17, backShoot: 16}, 
         ];
         let FPS = 30;
-        let timer = setInterval(localStorage.room == "loop" ? loop : menu, 1000 / FPS);
+        let timer = setInterval(menu, 1000 / FPS);
         let players;
+        let explosions = new Explosions();
         let cameras;
         let entities;
+        let time;
         let totalLaps = 2;
         
         // let cameras = [];
@@ -72,7 +76,7 @@
         let CarOptions = -1;
         let buttonsCanSwitch = 0;
         let buttonsSwitchLimit = 4;
-        let sound = .1;
+        let sound = .3;
         let mouse = 
         {   x: 0,
             y: 0,
@@ -389,7 +393,13 @@
             // {   cameras[i].update();
             //     cameras[i].draw();
             // }
-            players.update();
+            explosions.update();
+
+            if(!time.replaying)
+            {   players.update();
+            }
+
+            time.update();
             for(let i = 0; (i < cameras.length); i++)
             {   cameras[i].update();
                 cameras[i].draw();
@@ -401,7 +411,7 @@
         document.addEventListener("mousemove", mouseM);
         function keyD(event)
         {   keys[event.keyCode] = true;
-            console.log(event.keyCode);
+            // console.log(event.keyCode);
         }
         function keyU(event)
         {   keys[event.keyCode] = false;

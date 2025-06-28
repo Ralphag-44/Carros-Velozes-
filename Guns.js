@@ -242,11 +242,13 @@ class MissileLauncher extends Gun {
 
 
 class SecondGun extends Entity {
-    constructor(points, owner, img) {
+    constructor(points, owner, img, activeCount) {
         super(points, img);
         this.owner = owner;
         this.angle = owner.angle;
         this.active = false;
+        this.activeCount = activeCount*FPS;
+        this.maxActiveCount = activeCount*FPS;
     }
 
     canActivate() {
@@ -254,7 +256,6 @@ class SecondGun extends Entity {
     }
 
     rotate(angle) {
-        console.log(this.owner)
         let center = this.owner.center();
         this.translate(-center.x, -center.y);
         for (let i = 0; i < this.points.length; i++) {
@@ -269,6 +270,14 @@ class SecondGun extends Entity {
             this.points[i].translate(dx, dy);
         };
     }
+
+    update(){
+        this.activeCount -= this.activeCount > 0;
+        this.active = this.activeCount > 0;
+        if (this.activeCount == 0) {
+            this.activeCount = this.maxActiveCount;
+        }
+    }
 }
 
 
@@ -281,7 +290,7 @@ class Saw extends SecondGun {
             new Point(owner.points[2].x, owner.points[2].y + 7),
             new Point(owner.points[3].x, owner.points[3].y + 7),
         ];
-        super(points, owner, "guns/serraparada");
+        super(points, owner, "guns/serraparada", 7);
         this.damagePerSecond = 30;
 
         this.life = 120;
@@ -302,11 +311,12 @@ class Saw extends SecondGun {
                     }
                 }
             }
+            super.update();
         } else {
             this.img.src = "imgs/guns/serraparada.png";
         }
     }
-
+    
 }
 
 class FlameThrower extends SecondGun {
@@ -317,13 +327,13 @@ class FlameThrower extends SecondGun {
             new Point(owner.points[2].x, owner.points[2].y),
             new Point(owner.points[3].x, owner.points[3].y),
         ];
-        super(points, owner, "guns/flamethrower");
+        super(points, owner, "guns/flamethrower", 5);
         this.damagePerSecond = 30;
         this.life = 100;
-
+        
         this.flame = new Flame(this, this.owner);
     }
-
+    
     update() {
         if (this.active) {
             for (let i = 0; i < players.list.length; i++) {
@@ -338,20 +348,21 @@ class FlameThrower extends SecondGun {
                     }
                 }
             }
+            super.update();
         }
     }
-
+    
     translate(dx, dy) {
         super.translate(dx, dy);
         this.flame.translate(dx, dy);
     }
-
+    
     rotate(angle) {
         super.rotate(angle);
         this.flame.rotate(angle);
     }
-
-
+    
+    
     draw(id) {
         super.draw(id);
         if (this.active) {
@@ -374,7 +385,7 @@ class Flame extends Entity {
         this.carOwner = carOwner;
         this.angle = carOwner.angle;
     }
-
+    
     rotate(angle) {
         let center = this.carOwner.center();
         this.translate(-center.x, -center.y);
@@ -389,21 +400,36 @@ class Flame extends Entity {
 class PEM extends SecondGun {
     constructor(owner) {
         let points = [owner.center()];
-        super(points, owner, "guns/pem");
-        this.radius = 20;
+        super(points, owner, "guns/pem", 6);
+        this.radius = 150;
+        this.width = this.radius*2;
+        this.height = this.radius*2;
     }
-
+    
     update() {
         if (this.active) {
-            console.log("aaaa")
             for (let i = 0; i < players.list.length; i++) {
-                if (this.collision(players.list[i].points)) {
-                    
+                if (!(players.list[i] == this.owner)) {
+                    if (this.collision(players.list[i].points)) {
+                        keys[carsKeys[players.list[i].index].left] = false;
+                        keys[carsKeys[players.list[i].index].right] = false;
+                        keys[carsKeys[players.list[i].index].up] = false;
+                        keys[carsKeys[players.list[i].index].down] = false;
+                        // keys[carsKeys[players.list[i].index].frontShoot] = false;
+                        // keys[carsKeys[players.list[i].index].backShoot] = false;
+                    }
                 }
             }
+            super.update();
         }
     }
-
+    
+    draw(id) {
+        if (this.active) {
+            super.draw(id);
+        }
+    }
+    
     collision(entity) {
         let colidiu = false
         for (let i = 0; i < entity.length && !colidiu; i++) {
@@ -425,17 +451,18 @@ class MineLauncher extends SecondGun {
             new Point(owner.points[2].x, owner.points[2].y),
             new Point(owner.points[3].x, owner.points[3].y),
         ];
-        super(points, owner, "guns/minelauncher");
+        super(points, owner, "guns/minelauncher", 3);
         this.list = [];
     }
-
+    
     update() {
         if (this.active) {
             this.spawMine();
             this.active = false;
+            super.update();
         }
-
-
+        
+        
         for (let i = 0; i < this.list.length; i++) {
             let hit = false;
 
@@ -457,7 +484,7 @@ class MineLauncher extends SecondGun {
                     if (hit) break;
                 }
             }
-
+            
             if (hit) {
                 console.log("kabum")
                 entities.splice(entities.indexOf(this.list[i]), 1)
@@ -466,7 +493,7 @@ class MineLauncher extends SecondGun {
             }
         }
     }
-
+    
     spawMine() {
         let center = this.center();
         let mine = new Mine(center.x, center.y, 30, 30, this.owner);
