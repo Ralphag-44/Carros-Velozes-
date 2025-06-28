@@ -1,7 +1,7 @@
 class Cars {
     constructor() {
         this.list = [
-            new Viper(
+            new Ranger(
                 [
                     new Point(100, 100),
                     new Point(200, 100),
@@ -25,7 +25,7 @@ class Cars {
                     new Point(100, 550),
                 ], 2
             ),
-            new Vanderlei(
+            new Ranger(
                 [
                     new Point(100, 500),
                     new Point(200, 500),
@@ -101,7 +101,7 @@ class Car extends Entity {
             this.weapons[i].draw(id);
         }
         context.fillStyle = "red"
-        context.fillText(this.life, this.points[0].x-cameras[id].x, this.points[0].y-cameras[id].y)
+        context.fillText(Math.trunc(this.life*100)/100, this.points[0].x-cameras[id].x, this.points[0].y-cameras[id].y)
     };
 
     rotate(angle) {
@@ -152,7 +152,8 @@ class Ranger extends Car {
         super(points, "cars/ranger", index);
         this.life = 275;
         this.weapons = [
-            new Rifle(this)
+            new Rifle(this),
+            new PEM(this)
         ];
     }
 }

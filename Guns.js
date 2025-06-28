@@ -254,6 +254,7 @@ class SecondGun extends Entity {
     }
 
     rotate(angle) {
+        console.log(this.owner)
         let center = this.owner.center();
         this.translate(-center.x, -center.y);
         for (let i = 0; i < this.points.length; i++) {
@@ -377,7 +378,6 @@ class Flame extends Entity {
     rotate(angle) {
         let center = this.carOwner.center();
         this.translate(-center.x, -center.y);
-        console.log(this.points)
         for (let i = 0; i < this.points.length; i++) {
             this.points[i].rotate(angle);
         };
@@ -386,14 +386,35 @@ class Flame extends Entity {
     };
 }
 
-class PEM {
-    constructor() {
-
+class PEM extends SecondGun {
+    constructor(owner) {
+        let points = [owner.center()];
+        super(points, owner, "guns/pem");
+        this.radius = 20;
     }
 
     update() {
-
+        if (this.active) {
+            console.log("aaaa")
+            for (let i = 0; i < players.list.length; i++) {
+                if (this.collision(players.list[i].points)) {
+                    
+                }
+            }
+        }
     }
+
+    collision(entity) {
+        let colidiu = false
+        for (let i = 0; i < entity.length && !colidiu; i++) {
+            let distanceX = this.points[0].x - entity[i].x;
+            let distanceY = this.points[0].y - entity[i].y;
+            if (Math.hypot(distanceX, distanceY) < this.radius) {
+                colidiu = true;
+            }
+        }
+        return colidiu;
+    };
 }
 
 class MineLauncher extends SecondGun {

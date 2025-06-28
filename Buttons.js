@@ -45,7 +45,7 @@ class SwitchRoomButton extends Button
                 // canvas.width = 3621;
                 // canvas.height = 3027;
                 document.getElementById("style").textContent = "* { margin: 0px; overflow: hidden;}"
-                //players = new Cars();
+                //players = new Cars(carsSet.slice(0, playersQuantity));
                 //cameras = [];
                 // for(let i = 0; (i < players.list.length); i++)
                 // {   cameras.push(new Camera(i))
@@ -200,14 +200,15 @@ class SwitchControlButton extends Button
     }
 }
 class SetButton extends Button
-{   constructor(x, y, width, height)
+{   constructor(x, y, width, height, id)
     {   super(x, y, width, height, "");
+        this.id = id;
     }
     clicked()
     {   
     }
     draw()
-    {   context.fillStyle = CarOptions == 0 ? "rgba(0, 0, 0, .5)" : "rgba(0, 0, 0, 0)";
+    {   context.fillStyle = MenuOptions == this.id ? "rgba(0, 0, 0, .5)" : "rgba(0, 0, 0, 0)";
         context.fillRect(this.x, this.y, this.width, this.height);
     }
 }
@@ -223,13 +224,14 @@ class SwitchButton extends Button
                     CarOptions = i;
             }
             buttons.push(
-                new SetButton(this.x, this.y+125, this.width, this.width+50),
+                new SetButton(this.x, this.y+125, this.width, this.width+50, MenuOptions),
                 new SwitchButton(this.x, this.y + this.width + 200, "", 60, "PRONTO")
             );
         }
         else
-        {   buttons.splice(buttons.length-3);
+        {   buttons.splice(buttons.length-2);
         }
+        console.log("entrou aq")
     }
     draw()
     {   super.draw()

@@ -39,7 +39,7 @@ class Camera
         context.fillStyle = "green"
         context.fillRect(this.canvasX, this.canvasY, this.width, this.height)
         context.drawImage(world.pista, this.x, this.y, this.width, this.height, this.canvasX, this.canvasY, this.width, this.height) 
-        // eu to aq seu viado é que eu desativei o mic pra ficar numa posicao melhor na poltrona
+        
 
         
 

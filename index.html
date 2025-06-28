@@ -50,8 +50,9 @@
         {   cameras.push(new Camera(i))
         }
         
-        let world = {pista: new Image(), width: 3621, height: 3027}
+        let world = {pista: new Image(), width: 7242, height: 6054}
         world.pista.src = "imgs/backgrounds/pista_grande.png";
+        world.pista.onload = () => {};
 		const menu_background = new Image();
 		menu_background.src = "imgs/backgrounds/bg.png";
         context.textAlign = "center";
@@ -90,67 +91,105 @@
         function atualizePosition()
         {   if(switching)
             {   if(buttons.length == 7)
-                {   
+                {   if(buttonsCanSwitch == buttonsSwitchLimit)
+                    {   if(keys[39])
+                        {   CarOptions = (CarOptions + 1)%4;
+                            carsSet[MenuOptions] = CarOptions;
+                            buttonsCanSwitch = 0;
+                        }
+                        else
+                        {   if(keys[37])
+                            {   CarOptions = (CarOptions + 3)%4;
+                                carsSet[MenuOptions] = CarOptions;
+                                buttonsCanSwitch = 0;
+                            }
+                        }
+                        if(keys[38] || keys[40])
+                        {   MenuOptions = MenuOptions == buttons[5].id ? 6 : buttons[5].id;
+                            buttonsCanSwitch = 0;
+                        }
+                        if(MenuOptions == 6 && keys[32])
+                        {   MenuOptions = buttons[5].id;
+                            buttons[MenuOptions].clicked();
+                            buttonsCanSwitch = 0;
+                        }
+                    }
+                    if(mouse.colliding)
+                    {   if(mouse.click && buttonsCanSwitch == buttonsSwitchLimit)
+                        {   if(MenuOptions == 6)
+                            {   buttons[MenuOptions].clicked();
+                                MenuOptions = 0;
+                                //buttonsCanSwitch = 0;
+                                mouse.click = false;
+                            }
+                            if(MenuOptions == buttons[5]?.id)
+                            {   CarOptions = (CarOptions + 1)%4;
+                                carsSet[MenuOptions] = CarOptions;
+                                buttonsCanSwitch = 0;
+                            }
+                        }
+                    }
                 }
-
-                if(buttons.length >= 24 && keys.includes(true))
-                {   buttons[MenuOptions].text = "";
-                    if(buttonsCanSwitch == buttonsSwitchLimit)
-                    {   let playerPos = Math.trunc((MenuOptions)/6);
-                        let newKey = keys.indexOf(true);
-                        let keysT = ["up", "down", "left", "right", "frontShoot", "backShoot"];
-                        for(let i = 0; (i < carsKeys.length); i++)
-                        {   for(let i2 = 0; (i2 < keysT.length); i2++)
-                            {   if(carsKeys[i][keysT[i2]] == newKey)
-                                {   carsKeys[i][keysT[i2]] = "";
+                else 
+                {   if(buttons.length >= 24 && keys.includes(true))
+                    {   buttons[MenuOptions].text = "";
+                        if(buttonsCanSwitch == buttonsSwitchLimit)
+                        {   let playerPos = Math.trunc((MenuOptions)/6);
+                            let newKey = keys.indexOf(true);
+                            let keysT = ["up", "down", "left", "right", "frontShoot", "backShoot"];
+                            for(let i = 0; (i < carsKeys.length); i++)
+                            {   for(let i2 = 0; (i2 < keysT.length); i2++)
+                                {   if(carsKeys[i][keysT[i2]] == newKey)
+                                    {   carsKeys[i][keysT[i2]] = "";
+                                    }
                                 }
                             }
-                        }
-                        switch(MenuOptions%6)
-                        {   case 0: 
-                                carsKeys[playerPos].up = newKey;
-                            break;
-                            case 1: 
-                                carsKeys[playerPos].down = newKey;
-                            break;
-                            case 2: 
-                                carsKeys[playerPos].left = newKey;
-                            break;
-                            case 3: 
-                                carsKeys[playerPos].right = newKey;
-                            break;
-                            case 4: 
-                                carsKeys[playerPos].frontShoot = newKey;
-                            break;
-                            case 5: 
-                                carsKeys[playerPos].backShoot = newKey;
-                            break;
-                        }
-                        for(let i = 0; (i < buttons.length-1); i++)
-                        {   let local = Math.trunc(i/6);
-                            switch(i%6)
-                            {   case 0:
-                                    buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                            switch(MenuOptions%6)
+                            {   case 0: 
+                                    carsKeys[playerPos].up = newKey;
                                 break;
-                                case 1:
-                                    buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                                case 1: 
+                                    carsKeys[playerPos].down = newKey;
                                 break;
-                                case 2:
-                                    buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                                case 2: 
+                                    carsKeys[playerPos].left = newKey;
                                 break;
-                                case 3:
-                                    buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                                case 3: 
+                                    carsKeys[playerPos].right = newKey;
                                 break;
-                                case 4:
-                                    buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                                case 4: 
+                                    carsKeys[playerPos].frontShoot = newKey;
                                 break;
-                                case 5:
-                                    buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                                case 5: 
+                                    carsKeys[playerPos].backShoot = newKey;
                                 break;
                             }
+                            for(let i = 0; (i < buttons.length-1); i++)
+                            {   let local = Math.trunc(i/6);
+                                switch(i%6)
+                                {   case 0:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].up);
+                                    break;
+                                    case 1:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].down);
+                                    break;
+                                    case 2:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].left);
+                                    break;
+                                    case 3:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].right);
+                                    break;
+                                    case 4:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].frontShoot);
+                                    break;
+                                    case 5:
+                                        buttons[i].text = String.fromCharCode(carsKeys[local].backShoot);
+                                    break;
+                                }
+                            }
+                            buttonsCanSwitch = 0;
+                            switching = false;
                         }
-                        buttonsCanSwitch = 0;
-                        switching = false;
                     }
                 }
             }
@@ -241,7 +280,7 @@
                         }
                     }
                 }
-                if((keys[32] && buttonsCanSwitch == buttonsSwitchLimit) || (mouse.click && mouse.colliding) && !switching)
+                if((keys[32] && buttonsCanSwitch == buttonsSwitchLimit) || (mouse.click && mouse.colliding))
                 {   let parameter;
                     if(buttons[MenuOptions].text == "SOM")
                     {   parameter = 0;
@@ -261,30 +300,44 @@
         {   context.drawImage(menu_background, 0, 0, canvas.width, canvas.height);
             if(buttons[0].text == "PLAYER 1")
             {   let carsImgs = [new Image(), new Image(), new Image(), new Image()];
+                let weapons1Imgs = [new Image(), new Image(), new Image(), new Image()];
+                let weapons2Imgs = [new Image(), new Image(), new Image(), new Image()];
+                
                 for(let i = 0; (i < carsImgs.length); i++)
-                {   switch (carsSet[i])        
+                {   
+                    switch (carsSet[i])        
                     {   case 0:
                             carsImgs[i].src = "imgs/cars/viper.png";
+                            weapons1Imgs[i].src = "imgs/guns/machinegun.png";
+                            weapons2Imgs[i].src = "imgs/guns/flamethrower.png";
                         break;
                         case 1:
                             carsImgs[i].src = "imgs/cars/challenger.png";
+                            weapons1Imgs[i].src = "imgs/guns/shotgun.png";
+                            weapons2Imgs[i].src = "imgs/guns/serraparada.png";
                         break;
                         case 2:
                             carsImgs[i].src = "imgs/cars/ranger.png";
+                            weapons1Imgs[i].src = "imgs/guns/rifle.png";
+                            weapons2Imgs[i].src = "imgs/guns/pem.png";
                         break;
                         case 3:
                             carsImgs[i].src = "imgs/cars/vanderlei.png";
+                            weapons1Imgs[i].src = "imgs/guns/rocket.png";
+                            weapons2Imgs[i].src = "imgs/guns/minelauncher.png";
                         break;
                     }
                 }
                 
-                context.fillStyle = "black";
+                context.fillStyle = "white";
                 for(let i = 0; (i < carsImgs.length); i++)
                 {   context.fillRect(buttons[i].x, buttons[i].y+125, buttons[i].width, buttons[i].width+50)
                     context.save();
                     context.translate(buttons[i].x+buttons[i].width/2, buttons[i].y+buttons[i].height/2)
                     context.rotate(Math.PI*1.5)
                     context.drawImage(carsImgs[i], -buttons[i].width-100, -buttons[i].height/2, buttons[i].width, buttons[i].height);
+                    context.drawImage(weapons1Imgs[i], -buttons[i].width-50, -buttons[i].height/2-75, buttons[i].width/1.5, buttons[i].height/1.5);
+                    context.drawImage(weapons2Imgs[i], -buttons[i].width-50, -buttons[i].height/2+110, buttons[i].width/1.5, buttons[i].height/1.5);
                     context.restore();
                 }
             }
@@ -357,14 +410,28 @@
         function mouseM(event)
         {   mouse.x = event.clientX;
             mouse.y = event.clientY;
-            for(let i = 0; (i < buttons.length) && (!switching); i++)
-            {   if(mouse.collide(buttons[i]))
-                {   MenuOptions = i;
-                    mouse.colliding = true;
-                    i = buttons.length;
-                }   
+            for(let i = 0; (i < buttons.length); i++)
+            {   if(!switching)
+                {   if(mouse.collide(buttons[i]))
+                    {   MenuOptions = i;
+                        mouse.colliding = true;
+                        i = buttons.length;
+                    }   
+                    else
+                    {   mouse.colliding = false;
+                    }
+                }
                 else
-                {   mouse.colliding = false;
+                {   if(buttons.length == 7)
+                    {   if(mouse.collide(buttons[i]) && (i == buttons[5].id || i == 6 || i == 5))
+                        {   MenuOptions = i != 5 ? i : buttons[5].id;
+                            mouse.colliding = true;
+                            i = buttons.length;
+                        }   
+                        else
+                        {   mouse.colliding = false;
+                        }
+                    }
                 }
             }
         }
